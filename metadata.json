@@ -1,0 +1,7 @@
+{
+  "name": "StudyMate LK",
+  "description": "Comprehensive A/L study companion with syllabus tracking, interactive exam performance charts, subject notes & file repository, focus timer, and AI tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
