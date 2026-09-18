@@ -86,3 +86,24 @@ export interface SubjectFile {
   description?: string;
 }
 
+export interface ActivityLogEntry {
+  id: string;
+  type: 'subtopic' | 'task' | 'session' | 'exam' | 'note' | 'general';
+  title: string;
+  subtitle?: string;
+  subjectId?: string;
+  subjectName?: string;
+  timestamp: number;
+  meta?: {
+    progress?: number;
+    score?: number;
+    maxScore?: number;
+    grade?: GradeLetter;
+    durationMinutes?: number;
+    priority?: 'low' | 'medium' | 'high';
+    mode?: string;
+    originalId?: string;
+    [key: string]: any;
+  };
+}
+

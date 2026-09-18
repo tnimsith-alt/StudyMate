@@ -1,4 +1,4 @@
-import { Subject, StudyTask, UserStats, TimerSession, ExamResult, SubjectFile, GradeLetter } from '../types';
+import { Subject, StudyTask, UserStats, TimerSession, ExamResult, SubjectFile, GradeLetter, ActivityLogEntry } from '../types';
 
 export function calculateGrade(score: number, maxScore: number = 100): GradeLetter {
   const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0;
@@ -283,7 +283,8 @@ const STORAGE_KEYS = {
   THEME: 'studymate_theme_v2',
   TASK_HISTORY: 'studymate_task_history_v2',
   EXAM_RESULTS: 'studymate_exam_results_v2',
-  SUBJECT_FILES: 'studymate_subject_files_v2'
+  SUBJECT_FILES: 'studymate_subject_files_v2',
+  ACTIVITY_LOG: 'studymate_activity_log_v2'
 };
 
 
@@ -490,6 +491,95 @@ export function saveStoredSubjectFiles(files: SubjectFile[]) {
   }
 }
 
+export function loadStoredActivityLog(): ActivityLogEntry[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.ACTIVITY_LOG);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.error('Failed to load activity log', e);
+    return [];
+  }
+}
+
+export function saveStoredActivityLog(log: ActivityLogEntry[]) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_LOG, JSON.stringify(log.slice(0, 2000)));
+  } catch (e) {
+    console.error('Failed to save activity log', e);
+  }
+}
+
+export function logActivityEvent(entry: Omit<ActivityLogEntry, 'id' | 'timestamp'> & { id?: string; timestamp?: number }): ActivityLogEntry {
+  try {
+    const newEntry: ActivityLogEntry = {
+      ...entry,
+      id: entry.id || 'act-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      timestamp: entry.timestamp || Date.now()
+    };
+    const current = loadStoredActivityLog();
+    // Avoid exact duplicate events within a 2-second window
+    const isDuplicate = current.some(e => 
+      e.type === newEntry.type && 
+      e.title === newEntry.title && 
+      e.subjectId === newEntry.subjectId &&
+      Math.abs(e.timestamp - newEntry.timestamp) < 2000
+    );
+    if (isDuplicate) {
+      return newEntry;
+    }
+    const updated = [newEntry, ...current];
+    saveStoredActivityLog(updated);
+    return newEntry;
+  } catch (e) {
+    console.error('Failed to log activity event', e);
+    return {
+      ...entry,
+      id: entry.id || 'act-' + Date.now(),
+      timestamp: entry.timestamp || Date.now()
+    };
+  }
+}
+
+export function deleteActivityLogEntries(entryIds: string[]): ActivityLogEntry[] {
+  try {
+    const idSet = new Set(entryIds);
+    const current = loadStoredActivityLog();
+    const updated = current.filter(e => !idSet.has(e.id));
+    saveStoredActivityLog(updated);
+    return updated;
+  } catch (e) {
+    console.error('Failed to delete activity log entries', e);
+    return [];
+  }
+}
+
+export function clearActivityLog(options?: { olderThanMs?: number; type?: string }): ActivityLogEntry[] {
+  try {
+    if (!options) {
+      localStorage.removeItem(STORAGE_KEYS.ACTIVITY_LOG);
+      return [];
+    }
+    const current = loadStoredActivityLog();
+    const now = Date.now();
+    const filtered = current.filter(e => {
+      if (options.olderThanMs && (now - e.timestamp) <= options.olderThanMs) {
+        return true; // Keep newer
+      }
+      if (options.type && options.type !== 'all' && e.type !== options.type) {
+        return true; // Keep other types
+      }
+      return false; // Remove matching
+    });
+    saveStoredActivityLog(filtered);
+    return filtered;
+  } catch (e) {
+    console.error('Failed to clear activity log', e);
+    return [];
+  }
+}
+
 export function calculateSubjectProgress(subject: Subject): number {
   if (!subject.subtopics || subject.subtopics.length === 0) return 0;
   const total = subject.subtopics.reduce((acc, curr) => acc + (curr.progress || 0), 0);
@@ -498,7 +588,7 @@ export function calculateSubjectProgress(subject: Subject): number {
 
 export function exportStudyData(): string {
   const data = {
-    version: 3,
+    version: 4,
     exportedAt: new Date().toISOString(),
     subjects: loadStoredSubjects(),
     tasks: loadStoredTasks(),
@@ -506,7 +596,8 @@ export function exportStudyData(): string {
     stats: loadStoredStats(),
     sessions: loadStoredSessions(),
     examResults: loadStoredExamResults(),
-    subjectFiles: loadStoredSubjectFiles()
+    subjectFiles: loadStoredSubjectFiles(),
+    activityLog: loadStoredActivityLog()
   };
   return JSON.stringify(data, null, 2);
 }
@@ -535,10 +626,14 @@ export function importStudyData(jsonString: string): boolean {
     if (data.subjectFiles && Array.isArray(data.subjectFiles)) {
       saveStoredSubjectFiles(data.subjectFiles);
     }
+    if (data.activityLog && Array.isArray(data.activityLog)) {
+      saveStoredActivityLog(data.activityLog);
+    }
     return true;
   } catch (e) {
     console.error('Failed to import data', e);
     return false;
   }
 }
+
 

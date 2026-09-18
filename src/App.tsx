@@ -4,7 +4,7 @@ import {
   BarChart2, Save, Download, Plus, Settings, ChevronRight, RotateCcw,
   History, FolderOpen, MoreVertical, Menu
 } from 'lucide-react';
-import { Subject, StudyTask, UserStats, TimerSession, ExamResult, SubjectFile } from './types';
+import { Subject, StudyTask, UserStats, TimerSession, ExamResult, SubjectFile, ActivityLogEntry } from './types';
 import { 
   loadStoredSubjects, saveStoredSubjects, 
   loadStoredTasks, saveStoredTasks, 
@@ -13,6 +13,8 @@ import {
   loadStoredTaskHistory, saveStoredTaskHistory,
   loadStoredExamResults, saveStoredExamResults,
   loadStoredSubjectFiles, saveStoredSubjectFiles,
+  loadStoredActivityLog, saveStoredActivityLog, logActivityEvent,
+  deleteActivityLogEntries, clearActivityLog,
   recordCompletedTask, deleteTaskFromHistory, clearTaskHistory,
   calculateSubjectProgress, DEFAULT_SUBJECTS, DEFAULT_TASKS, DEFAULT_STATS, DEFAULT_TASK_HISTORY,
   DEFAULT_EXAM_RESULTS, DEFAULT_SUBJECT_FILES
@@ -62,6 +64,7 @@ export default function App() {
   const [stats, setStats] = useState<UserStats>(() => loadStoredStats());
   const [examResults, setExamResults] = useState<ExamResult[]>(() => loadStoredExamResults());
   const [subjectFiles, setSubjectFiles] = useState<SubjectFile[]>(() => loadStoredSubjectFiles());
+  const [activityLog, setActivityLog] = useState<ActivityLogEntry[]>(() => loadStoredActivityLog());
 
   const [activeSubjectId, setActiveSubjectId] = useState<string>(() => {
     const loaded = loadStoredSubjects();
@@ -115,6 +118,31 @@ export default function App() {
 
   // Update subjects
   const handleUpdateSubject = (updated: Subject) => {
+    // Check if any subtopic was newly completed to log milestone
+    const prevSubj = subjects.find(s => s.id === updated.id);
+    if (prevSubj) {
+      updated.subtopics.forEach(sub => {
+        const prevSub = prevSubj.subtopics.find(ps => ps.id === sub.id);
+        const isNowDone = (sub.progress === 100 || sub.status === 'completed');
+        const wasDone = prevSub ? (prevSub.progress === 100 || prevSub.status === 'completed') : false;
+        if (isNowDone && !wasDone) {
+          logActivityEvent({
+            type: 'subtopic',
+            title: sub.title,
+            subtitle: `Mastered syllabus topic (100%) in ${updated.name}`,
+            subjectId: updated.id,
+            subjectName: updated.name,
+            meta: {
+              progress: sub.progress,
+              pastPapersDone: sub.pastPapersDone,
+              confidence: sub.confidence
+            }
+          });
+          setActivityLog(loadStoredActivityLog());
+        }
+      });
+    }
+
     setSubjects(prev => {
       const next = prev.map(s => s.id === updated.id ? updated : s);
       saveStoredSubjects(next);
@@ -190,8 +218,23 @@ export default function App() {
 
     // Record in history if completed
     if (newlyCompletedTask) {
-      recordCompletedTask(newlyCompletedTask);
+      const taskObj: StudyTask = newlyCompletedTask;
+      recordCompletedTask(taskObj);
       setTaskHistory(loadStoredTaskHistory());
+
+      const taskSubj = subjects.find(s => s.id === taskObj.subjectId);
+      logActivityEvent({
+        type: 'task',
+        title: taskObj.text,
+        subtitle: `Completed daily task${taskSubj ? ` • ${taskSubj.name}` : ''}`,
+        subjectId: taskObj.subjectId,
+        subjectName: taskSubj?.name,
+        meta: {
+          originalId: taskObj.id,
+          priority: taskObj.priority
+        }
+      });
+      setActivityLog(loadStoredActivityLog());
     }
 
     // Update stats if newly completed
@@ -222,8 +265,18 @@ export default function App() {
     // Preserve completed tasks to history before removing from active daily view
     tasks.filter(t => t.done).forEach(t => {
       recordCompletedTask(t);
+      const taskSubj = subjects.find(s => s.id === t.subjectId);
+      logActivityEvent({
+        type: 'task',
+        title: t.text,
+        subtitle: `Completed daily task${taskSubj ? ` • ${taskSubj.name}` : ''}`,
+        subjectId: t.subjectId,
+        subjectName: taskSubj?.name,
+        meta: { originalId: t.id, priority: t.priority }
+      });
     });
     setTaskHistory(loadStoredTaskHistory());
+    setActivityLog(loadStoredActivityLog());
 
     setTasks(prev => {
       const next = prev.filter(t => !t.done);
@@ -278,6 +331,18 @@ export default function App() {
     triggerSaveIndicator();
   };
 
+  const handleDeleteLogEntries = (ids: string[]) => {
+    const updated = deleteActivityLogEntries(ids);
+    setActivityLog(updated);
+    triggerSaveIndicator();
+  };
+
+  const handleClearActivityLog = (options?: { olderThanMs?: number; type?: string }) => {
+    const updated = clearActivityLog(options);
+    setActivityLog(updated);
+    triggerSaveIndicator();
+  };
+
   // Timer session completion
   const handleSessionCompleted = (session: TimerSession) => {
     // Add session to history
@@ -287,6 +352,7 @@ export default function App() {
     setSessions(nextSessions);
 
     // Add minutes to subject if tagged
+    const targetSubj = subjects.find(s => s.id === session.subjectId);
     if (session.subjectId) {
       setSubjects(prev => {
         const next = prev.map(s => {
@@ -299,6 +365,21 @@ export default function App() {
         return next;
       });
     }
+
+    // Log activity event
+    logActivityEvent({
+      type: 'session',
+      title: `${session.durationMinutes}m Study Session`,
+      subtitle: `${session.mode === 'pomodoro' ? 'Pomodoro Focus' : session.mode === 'stopwatch' ? 'Stopwatch Timer' : 'Break'}${targetSubj ? ` • ${targetSubj.name}` : ''}`,
+      subjectId: session.subjectId,
+      subjectName: targetSubj?.name,
+      meta: {
+        durationMinutes: session.durationMinutes,
+        mode: session.mode,
+        originalId: session.id
+      }
+    });
+    setActivityLog(loadStoredActivityLog());
 
     // Update stats
     setStats(prev => {
@@ -326,6 +407,24 @@ export default function App() {
       saveStoredExamResults(next);
       return next;
     });
+
+    const examSubj = subjects.find(s => s.id === result.subjectId);
+    logActivityEvent({
+      type: 'exam',
+      title: `${result.examName} — ${result.score}/${result.maxScore} (${result.percentage}%)`,
+      subtitle: `Grade ${result.grade} • ${result.examType.replace('_', ' ').toUpperCase()}${examSubj ? ` • ${examSubj.name}` : ''}`,
+      subjectId: result.subjectId,
+      subjectName: examSubj?.name,
+      meta: {
+        score: result.score,
+        maxScore: result.maxScore,
+        percentage: result.percentage,
+        grade: result.grade,
+        originalId: newResult.id
+      }
+    });
+    setActivityLog(loadStoredActivityLog());
+
     triggerSaveIndicator();
   };
 
@@ -380,6 +479,18 @@ export default function App() {
       saveStoredSubjectFiles(next);
       return next;
     });
+
+    const fileSubj = subjects.find(s => s.id === file.subjectId);
+    logActivityEvent({
+      type: 'note',
+      title: file.name,
+      subtitle: `Uploaded ${file.category.replace('_', ' ')} resource${fileSubj ? ` • ${fileSubj.name}` : ''}`,
+      subjectId: file.subjectId,
+      subjectName: fileSubj?.name,
+      meta: { category: file.category, size: file.size }
+    });
+    setActivityLog(loadStoredActivityLog());
+
     triggerSaveIndicator();
   };
 
@@ -402,6 +513,7 @@ export default function App() {
     setStats(loadStoredStats());
     setExamResults(loadStoredExamResults());
     setSubjectFiles(loadStoredSubjectFiles());
+    setActivityLog(loadStoredActivityLog());
     if (loadedSubs.length > 0) {
       setActiveSubjectId(loadedSubs[0].id);
     }
@@ -415,6 +527,7 @@ export default function App() {
     saveStoredStats(DEFAULT_STATS);
     saveStoredExamResults(DEFAULT_EXAM_RESULTS);
     saveStoredSubjectFiles(DEFAULT_SUBJECT_FILES);
+    saveStoredActivityLog([]);
     setSubjects(DEFAULT_SUBJECTS);
     setTasks(DEFAULT_TASKS);
     setTaskHistory(DEFAULT_TASK_HISTORY);
@@ -422,6 +535,7 @@ export default function App() {
     setStats(DEFAULT_STATS);
     setExamResults(DEFAULT_EXAM_RESULTS);
     setSubjectFiles(DEFAULT_SUBJECT_FILES);
+    setActivityLog([]);
     setActiveSubjectId(DEFAULT_SUBJECTS[0].id);
     triggerSaveIndicator();
   };
@@ -862,19 +976,22 @@ export default function App() {
 
         {/* Task & Study History View */}
         {activeSection === 'history' && (
-          <div className="max-w-4xl mx-auto space-y-6">
+          <div className="max-w-5xl mx-auto space-y-6">
             <HistoryView
               taskHistory={taskHistory}
               sessions={sessions}
               subjects={subjects}
               examResults={examResults}
               subjectFiles={subjectFiles}
+              activityLog={activityLog}
               stats={stats}
               onRestoreTask={handleRestoreTask}
               onDeleteHistoryTask={handleDeleteHistoryTask}
               onClearHistory={handleClearHistory}
               onDeleteSession={handleDeleteSession}
               onClearSessions={handleClearSessions}
+              onDeleteLogEntries={handleDeleteLogEntries}
+              onClearActivityLog={handleClearActivityLog}
               onNavigate={(sec) => setActiveSection(sec)}
             />
           </div>
