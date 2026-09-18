@@ -652,7 +652,7 @@ export default function App() {
             }`}
           >
             <History className="w-4 h-4" />
-            <span>History ({taskHistory.length})</span>
+            <span>Live History ({taskHistory.length + sessions.length})</span>
           </button>
 
           <button
@@ -867,11 +867,15 @@ export default function App() {
               taskHistory={taskHistory}
               sessions={sessions}
               subjects={subjects}
+              examResults={examResults}
+              subjectFiles={subjectFiles}
+              stats={stats}
               onRestoreTask={handleRestoreTask}
               onDeleteHistoryTask={handleDeleteHistoryTask}
               onClearHistory={handleClearHistory}
               onDeleteSession={handleDeleteSession}
               onClearSessions={handleClearSessions}
+              onNavigate={(sec) => setActiveSection(sec)}
             />
           </div>
         )}
