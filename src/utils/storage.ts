@@ -119,62 +119,7 @@ export const DEFAULT_TASKS: StudyTask[] = [
   { id: 'task-5', text: 'Past paper review: 2024 Physics Structured Essay Section A', done: false, subjectId: 'subj-physics', priority: 'high', createdAt: Date.now() - 18000000 }
 ];
 
-export const DEFAULT_TASK_HISTORY: StudyTask[] = [
-  {
-    id: 'hist-1',
-    text: 'Chemistry — Memorize Organic SN1 vs SN2 mechanism pathways',
-    done: true,
-    subjectId: 'subj-chemistry',
-    priority: 'high',
-    createdAt: Date.now() - 7200000,
-    completedAt: Date.now() - 3600000
-  },
-  {
-    id: 'hist-2',
-    text: 'Physics — Dimensional analysis past paper question (2020 MCQ)',
-    done: true,
-    subjectId: 'subj-physics',
-    priority: 'medium',
-    createdAt: Date.now() - 86400000 - 3600000,
-    completedAt: Date.now() - 86400000
-  },
-  {
-    id: 'hist-3',
-    text: 'Pure Maths — Quadratic equations roots relationship proof',
-    done: true,
-    subjectId: 'subj-pure-maths',
-    priority: 'high',
-    createdAt: Date.now() - 86400000 * 2,
-    completedAt: Date.now() - 86400000 * 2 + 7200000
-  },
-  {
-    id: 'hist-4',
-    text: 'Applied Maths — Equilibrium of 3 non-parallel coplanar forces',
-    done: true,
-    subjectId: 'subj-applied-maths',
-    priority: 'medium',
-    createdAt: Date.now() - 86400000 * 3,
-    completedAt: Date.now() - 86400000 * 3 + 3600000
-  },
-  {
-    id: 'hist-5',
-    text: 'Physics — Circular motion banking angle derivation and notes',
-    done: true,
-    subjectId: 'subj-physics',
-    priority: 'high',
-    createdAt: Date.now() - 86400000 * 4,
-    completedAt: Date.now() - 86400000 * 4 + 5400000
-  },
-  {
-    id: 'hist-6',
-    text: 'Chemistry — Periodic Table Trends in ionization energy summary sheet',
-    done: true,
-    subjectId: 'subj-chemistry',
-    priority: 'low',
-    createdAt: Date.now() - 86400000 * 5,
-    completedAt: Date.now() - 86400000 * 5 + 4000000
-  }
-];
+export const DEFAULT_TASK_HISTORY: StudyTask[] = [];
 
 export const DEFAULT_EXAM_RESULTS: ExamResult[] = [
   {

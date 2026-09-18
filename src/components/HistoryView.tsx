@@ -142,22 +142,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     });
   });
 
-  // 4. Files
-  subjectFiles.forEach(f => {
-    liveActivities.push({
-      id: `file-${f.id}`,
-      type: 'file',
-      title: f.name,
-      subtitle: `Added file to ${f.category.replace('_', ' ')}`,
-      subjectId: f.subjectId,
-      timestamp: f.uploadedAt,
-      badgeText: 'File Note',
-      badgeColor: 'bg-cyan-100 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
-      icon: <FolderOpen className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />,
-      rawItem: f
-    });
-  });
-
   // Sort unified feed newest first
   liveActivities.sort((a, b) => b.timestamp - a.timestamp);
 
@@ -377,7 +361,6 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               <option value="task">Tasks Only</option>
               <option value="session">Timer Sessions</option>
               <option value="exam">Exam Results</option>
-              <option value="file">Files & Notes</option>
             </select>
           )}
 
