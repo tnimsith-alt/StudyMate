@@ -347,7 +347,7 @@ export function loadStoredSubjects(): Subject[] {
     const raw = localStorage.getItem(STORAGE_KEYS.SUBJECTS);
     if (!raw) return DEFAULT_SUBJECTS;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed)) return parsed;
     return DEFAULT_SUBJECTS;
   } catch (e) {
     console.error('Failed to load subjects', e);
@@ -508,7 +508,7 @@ export function loadStoredExamResults(): ExamResult[] {
     const raw = localStorage.getItem(STORAGE_KEYS.EXAM_RESULTS);
     if (!raw) return DEFAULT_EXAM_RESULTS;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed)) return parsed;
     return DEFAULT_EXAM_RESULTS;
   } catch (e) {
     console.error('Failed to load exam results', e);
@@ -529,7 +529,7 @@ export function loadStoredSubjectFiles(): SubjectFile[] {
     const raw = localStorage.getItem(STORAGE_KEYS.SUBJECT_FILES);
     if (!raw) return DEFAULT_SUBJECT_FILES;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed)) return parsed;
     return DEFAULT_SUBJECT_FILES;
   } catch (e) {
     console.error('Failed to load subject files', e);
