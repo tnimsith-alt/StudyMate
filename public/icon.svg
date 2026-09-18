@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded App Icon Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  
+  <!-- Subtle inner glowing border -->
+  <rect x="12" y="12" width="488" height="488" rx="100" fill="none" stroke="#60a5fa" stroke-width="6" stroke-opacity="0.35" />
+
+  <!-- Book Base / Pages -->
+  <path d="M120 340 C180 310 240 310 256 325 C272 310 332 310 392 340 L392 210 C332 180 272 180 256 195 C240 180 180 180 120 210 Z" fill="#ffffff" opacity="0.95" />
+  
+  <path d="M120 340 C180 310 240 310 256 325 L256 195 C240 180 180 180 120 210 Z" fill="#f1f5f9" />
+  
+  <path d="M256 325 C272 310 332 310 392 340 L392 210 C332 180 272 180 256 195 Z" fill="#ffffff" />
+  
+  <line x1="256" y1="195" x2="256" y2="325" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Graduation Mortarboard / Academic Cap on Top -->
+  <polygon points="256,120 380,175 256,230 132,175" fill="#f8fafc" />
+  <polygon points="256,132 360,175 256,218 152,175" fill="#e2e8f0" />
+  
+  <!-- Cap Skull Base -->
+  <path d="M180 200 L180 240 C180 275 332 275 332 240 L332 200 C300 220 270 225 256 225 C242 225 212 220 180 200 Z" fill="#f8fafc" />
+
+  <!-- Tassel Ribbon & Bob -->
+  <path d="M340 185 Q360 210 365 255" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" />
+  <circle cx="365" cy="262" r="9" fill="#f59e0b" />
+  <polygon points="360,268 370,268 374,295 356,295" fill="#f59e0b" />
+  
+  <!-- Star / Sparkle Icon -->
+  <path d="M256 370 L263 392 L285 399 L263 406 L256 428 L249 406 L227 399 L249 392 Z" fill="#facc15" />
+</svg>

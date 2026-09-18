@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, BookOpen, Clock, CheckCircle2, History, Sparkles, 
   BarChart2, FolderOpen, Save, Download, Plus, ChevronRight,
-  Award, Flame, Target, FileText, Layers
+  Award, Flame, Target, FileText, Layers, Smartphone, Check
 } from 'lucide-react';
 import { Subject, UserStats, StudyTask, ExamResult, SubjectFile } from '../types';
 import { calculateSubjectProgress } from '../utils/storage';
@@ -40,6 +40,48 @@ export function SlideBarDrawer({
   onOpenBackupModal,
   onOpenAddSubject
 }: SlideBarDrawerProps) {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
+  const [showInstallHelp, setShowInstallHelp] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Check if already in standalone mode
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+      setIsInstalled(true);
+    }
+
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setIsInstalled(true);
+      }
+      setDeferredPrompt(null);
+    } else {
+      setShowInstallHelp(prev => !prev);
+    }
+  };
+
   if (!isOpen) return null;
 
   const totalSubtopics = subjects.reduce((acc, s) => acc + s.subtopics.length, 0);
@@ -309,8 +351,48 @@ export function SlideBarDrawer({
             {/* Data & Backup Tools Section */}
             <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-2 block">
-                Workspace Utilities
+                Workspace Utilities & App
               </span>
+
+              {/* Install PWA Button */}
+              <div className="space-y-1.5">
+                <button
+                  type="button"
+                  onClick={handleInstallClick}
+                  className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                    isInstalled
+                      ? 'border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                      : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Smartphone className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <span>{isInstalled ? 'App Installed on Device' : 'Install App on Phone / PC'}</span>
+                  </div>
+                  {isInstalled ? (
+                    <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
+                      <Check className="w-3.5 h-3.5" /> Installed
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                      {deferredPrompt ? '1-Click Install' : 'Instructions'}
+                    </span>
+                  )}
+                </button>
+
+                {showInstallHelp && !isInstalled && (
+                  <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 space-y-1.5">
+                    <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <Smartphone className="w-3.5 h-3.5 text-blue-600" /> How to install in Chrome / Safari:
+                    </div>
+                    <ul className="list-disc list-inside space-y-1 text-slate-500 dark:text-slate-400">
+                      <li><strong>Chrome on PC/Mac:</strong> Click the <em>Install</em> icon in your address bar (top right).</li>
+                      <li><strong>Chrome on Android:</strong> Tap the 3 dots (⋮) menu → tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong>.</li>
+                      <li><strong>Safari on iPhone:</strong> Tap <strong>Share (⎋)</strong> → tap <strong>"Add to Home Screen"</strong>.</li>
+                    </ul>
+                  </div>
+                )}
+              </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <button
