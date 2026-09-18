@@ -6,6 +6,7 @@ export interface Subtopic {
   notes?: string;
   pastPapersDone?: number;
   confidence?: number; // 1 - 5
+  completedAt?: number;
 }
 
 export interface Subject {

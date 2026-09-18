@@ -68,9 +68,22 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
         const merged = { ...s, ...updates };
         // Sync status if progress changed
         if (updates.progress !== undefined) {
-          if (updates.progress === 100) merged.status = 'completed';
-          else if (updates.progress > 0) merged.status = 'in_progress';
-          else merged.status = 'not_started';
+          if (updates.progress === 100) {
+            merged.status = 'completed';
+            if (!merged.completedAt) merged.completedAt = Date.now();
+          } else if (updates.progress > 0) {
+            merged.status = 'in_progress';
+          } else {
+            merged.status = 'not_started';
+            delete merged.completedAt;
+          }
+        }
+        if (updates.status !== undefined) {
+          if (updates.status === 'completed' && !merged.completedAt) {
+            merged.completedAt = Date.now();
+          } else if (updates.status === 'not_started') {
+            delete merged.completedAt;
+          }
         }
         return merged;
       }

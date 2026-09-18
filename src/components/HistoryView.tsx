@@ -23,7 +23,7 @@ interface HistoryViewProps {
 
 interface ActivityItem {
   id: string;
-  type: 'task' | 'session' | 'exam' | 'file';
+  type: 'task' | 'subtopic' | 'session' | 'exam' | 'file';
   title: string;
   subtitle?: string;
   subjectId?: string;
@@ -48,7 +48,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   onClearSessions,
   onNavigate
 }) => {
-  const [activeTab, setActiveTab] = useState<'feed' | 'tasks' | 'sessions' | 'exams'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'subtopics' | 'tasks' | 'sessions' | 'exams'>('feed');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
@@ -91,7 +91,28 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   // Build unified Live Activity Feed
   const liveActivities: ActivityItem[] = [];
 
-  // 1. Tasks
+  // 1. Completed Subtopics from syllabus
+  subjects.forEach(subject => {
+    subject.subtopics.forEach(sub => {
+      if (sub.progress === 100 || sub.status === 'completed') {
+        const ts = sub.completedAt || subject.updatedAt || Date.now();
+        liveActivities.push({
+          id: `subtopic-${subject.id}-${sub.id}`,
+          type: 'subtopic',
+          title: sub.title,
+          subtitle: `Completed syllabus unit in ${subject.name}`,
+          subjectId: subject.id,
+          timestamp: ts,
+          badgeText: 'Topic Mastered',
+          badgeColor: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+          icon: <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+          rawItem: { ...sub, subjectName: subject.name, subjectId: subject.id }
+        });
+      }
+    });
+  });
+
+  // 2. Tasks
   taskHistory.forEach(task => {
     const ts = task.completedAt || task.createdAt;
     liveActivities.push({
@@ -102,13 +123,13 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
       subjectId: task.subjectId,
       timestamp: ts,
       badgeText: 'Task Done',
-      badgeColor: 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-      icon: <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      badgeColor: 'bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
+      icon: <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />,
       rawItem: task
     });
   });
 
-  // 2. Timer sessions
+  // 3. Timer sessions
   sessions.forEach(sess => {
     liveActivities.push({
       id: `sess-${sess.id}`,
@@ -124,7 +145,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     });
   });
 
-  // 3. Exams
+  // 4. Exams
   examResults.forEach(ex => {
     liveActivities.push({
       id: `exam-${ex.id}`,
@@ -154,6 +175,29 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     return matchesSearch && matchesSubject && matchesType;
   });
 
+  // Filter subtopics tab
+  const allCompletedSubtopics: { subtopic: any; subject: Subject; timestamp: number }[] = [];
+  subjects.forEach(subject => {
+    subject.subtopics.forEach(sub => {
+      if (sub.progress === 100 || sub.status === 'completed') {
+        const ts = sub.completedAt || subject.updatedAt || Date.now();
+        allCompletedSubtopics.push({
+          subtopic: sub,
+          subject,
+          timestamp: ts
+        });
+      }
+    });
+  });
+  allCompletedSubtopics.sort((a, b) => b.timestamp - a.timestamp);
+
+  const filteredSubtopics = allCompletedSubtopics.filter(item => {
+    const matchesSearch = item.subtopic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.subject.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSubject = selectedSubjectId === 'all' || item.subject.id === selectedSubjectId;
+    return matchesSearch && matchesSubject;
+  });
+
   // Filter tasks tab
   const filteredTasks = taskHistory.filter(task => {
     const matchesSearch = task.text.toLowerCase().includes(searchQuery.toLowerCase());
@@ -168,6 +212,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   });
 
   // Metrics
+  const totalSubtopicsMastered = allCompletedSubtopics.length;
   const totalCompletedTasks = taskHistory.length;
   const totalSessionMinutes = sessions.reduce((acc, s) => acc + s.durationMinutes, 0);
   const totalExamsRecorded = examResults.length;
@@ -231,7 +276,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         </div>
 
         {/* Overview Stats Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 pt-4 sm:pt-5">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3 pt-4 sm:pt-5">
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
               Total Activities
@@ -246,13 +291,25 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
 
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+              Topics Mastered
+            </span>
+            <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-0.5">
+              {totalSubtopicsMastered}
+            </div>
+            <span className="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+              Syllabus completed
+            </span>
+          </div>
+
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800">
+            <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
               Tasks Done
             </span>
             <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-0.5">
               {totalCompletedTasks}
             </div>
-            <span className="text-[11px] sm:text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-              Completed items
+            <span className="text-[11px] sm:text-xs text-teal-600 dark:text-teal-400 font-medium">
+              Checklist items
             </span>
           </div>
 
@@ -268,7 +325,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             </span>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800">
+          <div className="col-span-2 sm:col-span-1 bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
               Exam Scores
             </span>
@@ -282,7 +339,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         </div>
       </div>
 
-      {/* Sub-Tabs: Live Feed, Tasks, Sessions, Exams */}
+      {/* Sub-Tabs: Live Feed, Topics Done, Tasks, Sessions, Exams */}
       <div className="flex items-center gap-1.5 sm:gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto no-scrollbar">
         <button
           type="button"
@@ -295,6 +352,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         >
           <Activity className="w-4 h-4" />
           <span>Live Feed ({liveActivities.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('subtopics')}
+          className={`flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+            activeTab === 'subtopics'
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Topics Done ({totalSubtopicsMastered})</span>
         </button>
 
         <button
@@ -358,6 +428,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               className="flex-1 sm:flex-none text-xs px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Activity Types</option>
+              <option value="subtopic">Syllabus Topics</option>
               <option value="task">Tasks Only</option>
               <option value="session">Timer Sessions</option>
               <option value="exam">Exam Results</option>
@@ -439,6 +510,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                     </div>
 
                     {/* Action buttons based on type */}
+                    {act.type === 'subtopic' && onNavigate && (
+                      <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => onNavigate('syllabus')}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors cursor-pointer"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>View Syllabus</span>
+                        </button>
+                      </div>
+                    )}
+
                     {act.type === 'task' && (
                       <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
                         <button
@@ -480,7 +564,78 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         </div>
       )}
 
-      {/* TAB 2: Completed Tasks */}
+      {/* TAB 2: Mastered Syllabus Topics */}
+      {activeTab === 'subtopics' && (
+        <div className="space-y-3">
+          {filteredSubtopics.length === 0 ? (
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center shadow-xs">
+              <BookOpen className="w-8 h-8 text-slate-300 dark:text-slate-700 mx-auto mb-2" />
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">No mastered syllabus topics yet</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+                Mark your syllabus subtopics as 100% complete in the Subjects view to record topic mastery milestones here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {filteredSubtopics.map(item => {
+                const subject = item.subject;
+                const sub = item.subtopic;
+                const ts = item.timestamp;
+
+                return (
+                  <div
+                    key={`${subject.id}-${sub.id}`}
+                    className="p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="mt-0.5 w-7 h-7 rounded-xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <BookOpen className="w-4 h-4" />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                            {sub.title}
+                          </h4>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md border bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+                            100% Mastered
+                          </span>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${getSubjectColorClasses(subject)}`}>
+                            {subject.name}
+                          </span>
+
+                          <span className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {getRelativeTime(ts)} ({formatDate(ts)} at {formatExactTime(ts)})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {onNavigate && (
+                      <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => onNavigate('syllabus')}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors cursor-pointer"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>Open Syllabus</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 3: Completed Tasks */}
       {activeTab === 'tasks' && (
         <div className="space-y-3">
           {filteredTasks.length === 0 ? (
