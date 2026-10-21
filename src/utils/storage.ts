@@ -21,20 +21,7 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     loggedMinutes: 0,
     updatedAt: Date.now(),
     notes: '',
-    subtopics: [
-      { id: 'sub-p-1', title: 'Units, Dimensions & Errors', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-2', title: 'Mechanics: Kinematics & Projectiles', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-3', title: 'Newtonian Dynamics & Momentum', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-4', title: 'Circular Motion & Rotational Dynamics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-5', title: 'Oscillations & Simple Harmonic Motion', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-6', title: 'Mechanical Waves & Sound (Doppler Effect)', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-7', title: 'Geometrical & Physical Optics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-8', title: 'Thermal Physics & Kinetic Theory', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-9', title: 'Gravitational & Electrostatic Fields', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-10', title: 'Current Electricity & Circuits', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-11', title: 'Electromagnetism & AC Circuits', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-p-12', title: 'Electronics & Modern Physics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
-    ]
+    subtopics: []
   },
   {
     id: 'subj-chemistry',
@@ -46,20 +33,7 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     loggedMinutes: 0,
     updatedAt: Date.now(),
     notes: '',
-    subtopics: [
-      { id: 'sub-c-1', title: 'Atomic Structure & Quantum Numbers', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-2', title: 'Chemical Bonding & Hybridization', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-3', title: 'Chemical Calculations & Mole Concept', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-4', title: 'Gaseous State & Real Gases', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-5', title: 'Chemical Energetics & Thermodynamics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-6', title: 'Chemical & Phase Equilibrium', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-7', title: 'Ionic Equilibrium, pH & Buffers', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-8', title: 'Inorganic Chemistry: s & p Block', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-9', title: 'Transition Metals (d-block Complexes)', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-10', title: 'Organic Chemistry: Hydrocarbons & Halides', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-11', title: 'Carbonyls, Acids & Nitrogen Derivatives', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-c-12', title: 'Industrial & Environmental Chemistry', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
-    ]
+    subtopics: []
   },
   {
     id: 'subj-pure-maths',
@@ -71,20 +45,7 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     loggedMinutes: 0,
     updatedAt: Date.now(),
     notes: '',
-    subtopics: [
-      { id: 'sub-m-1', title: 'Real Numbers & Mathematical Induction', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-2', title: 'Quadratic Equations & Polynomials', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-3', title: 'Inequalities & Modulus Functions', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-4', title: 'Trigonometric Functions & Proofs', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-5', title: 'Limits & Differentiation Techniques', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-6', title: 'Applications of Derivatives (Max/Min)', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-7', title: 'Definite & Indefinite Integration', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-8', title: 'Straight Lines & Circles', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-9', title: 'Matrices & Determinants', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-10', title: 'Permutations & Combinations', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-11', title: 'Binomial Theorem', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-m-12', title: 'Complex Numbers & De Moivre Theorem', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
-    ]
+    subtopics: []
   },
   {
     id: 'subj-applied-maths',
@@ -96,18 +57,7 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     loggedMinutes: 0,
     updatedAt: Date.now(),
     notes: '',
-    subtopics: [
-      { id: 'sub-a-1', title: 'Vectors & Force Resolution', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-2', title: 'Rectilinear & Relative Motion', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-3', title: 'Newton\'s Laws of Motion & Friction', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-4', title: 'Work, Power, Energy & Impulse', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-5', title: 'Circular Motion & Simple Pendulum', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-6', title: 'Equilibrium of Coplanar Forces & Rigid Bodies', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-7', title: 'Centre of Gravity & Frameworks', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-8', title: 'Jointed Rods & Virtual Work', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-9', title: 'Measures of Central Tendency & Dispersion', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
-      { id: 'sub-a-10', title: 'Probability & Conditional Probability', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
-    ]
+    subtopics: []
   }
 ];
 
@@ -132,6 +82,9 @@ const LEGACY_MOCK_TASK_IDS = new Set(['task-1', 'task-2', 'task-3', 'task-4', 't
 const LEGACY_MOCK_EXAM_IDS = new Set(['exam-1', 'exam-2', 'exam-3', 'exam-4', 'exam-5', 'exam-6', 'exam-7', 'exam-8']);
 const LEGACY_MOCK_FILE_IDS = new Set(['file-1', 'file-2', 'file-3']);
 
+// Matches the 46 default example subtopics: sub-p-1..12, sub-c-1..12, sub-m-1..12, sub-a-1..10
+const isLegacyExampleSubtopic = (id: string) => /^(sub-p-\d+|sub-c-\d+|sub-m-\d+|sub-a-\d+)$/.test(id);
+
 const STORAGE_KEYS = {
   SUBJECTS: 'studymate_subjects_v2',
   TASKS: 'studymate_tasks_v2',
@@ -151,13 +104,25 @@ export function loadStoredSubjects(): Subject[] {
     if (!raw) return DEFAULT_SUBJECTS;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      // Clean legacy mock progress if present from original template (e.g. 480 logged minutes or sample notes)
-      const isLegacyTemplate = parsed.some(s => s.id === 'subj-physics' && s.loggedMinutes === 480);
-      if (isLegacyTemplate) {
-        saveStoredSubjects(DEFAULT_SUBJECTS);
-        return DEFAULT_SUBJECTS;
+      let modified = false;
+      const cleaned = parsed.map((subj: Subject) => {
+        if (Array.isArray(subj.subtopics)) {
+          const filteredSubtopics = subj.subtopics.filter(sub => !isLegacyExampleSubtopic(sub.id));
+          if (filteredSubtopics.length !== subj.subtopics.length) {
+            modified = true;
+            return {
+              ...subj,
+              subtopics: filteredSubtopics
+            };
+          }
+        }
+        return subj;
+      });
+
+      if (modified) {
+        saveStoredSubjects(cleaned);
       }
-      return parsed;
+      return cleaned;
     }
     return DEFAULT_SUBJECTS;
   } catch (e) {

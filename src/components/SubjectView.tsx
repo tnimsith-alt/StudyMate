@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Plus, Search, CheckCircle2, Clock, Trash2, Edit3, 
   ChevronDown, ChevronUp, Star, BookOpen, 
-  Sparkles, FileText, Check, AlertCircle, ArrowUpRight, RotateCcw
+  Sparkles, FileText, Check, AlertCircle, ArrowUpRight, RotateCcw,
+  ListPlus, X, Layers
 } from 'lucide-react';
 import { Subject, Subtopic } from '../types';
 import { calculateSubjectProgress } from '../utils/storage';
@@ -29,20 +30,30 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
   const [expandedNotesId, setExpandedNotesId] = useState<string | null>(null);
   const [editingSubtopicId, setEditingSubtopicId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
+  
+  // Bulk add modal state
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [bulkText, setBulkText] = useState('');
+
+  // Inline confirmations to avoid window.confirm
+  const [deleteConfirmSubId, setDeleteConfirmSubId] = useState<string | null>(null);
+  const [isResetTimeConfirmOpen, setIsResetTimeConfirmOpen] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const overallProgress = calculateSubjectProgress(subject);
   const totalSubtopics = subject.subtopics.length;
   const completedCount = subject.subtopics.filter(s => s.progress === 100).length;
 
-  // Add new subtopic
-  const handleAddSubtopic = (e: React.FormEvent) => {
-    e.preventDefault();
-    const title = quickTitle.trim();
-    if (!title) return;
+  // Add single subtopic
+  const handleAddSubtopic = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = quickTitle.trim().replace(/^[-*•\d+.)\]\s]+/, '').trim();
+    if (!clean) return;
 
     const newSub: Subtopic = {
-      id: 'sub-' + Date.now(),
-      title,
+      id: 'sub-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+      title: clean,
       status: 'not_started',
       progress: 0,
       confidence: 3,
@@ -58,6 +69,42 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
 
     onUpdateSubject(updated);
     setQuickTitle('');
+    soundFx.playSuccess();
+
+    // Re-focus input for rapid consecutive topic entry
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
+  };
+
+  // Bulk add multiple subtopics
+  const handleBulkAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    const lines = bulkText
+      .split('\n')
+      .map(line => line.trim().replace(/^[-*•\d+.)\]\s]+/, '').trim())
+      .filter(line => line.length > 0);
+
+    if (lines.length === 0) return;
+
+    const newSubtopics: Subtopic[] = lines.map((title, i) => ({
+      id: 'sub-' + (Date.now() + i) + '-' + Math.random().toString(36).substring(2, 6),
+      title,
+      status: 'not_started',
+      progress: 0,
+      confidence: 3,
+      pastPapersDone: 0,
+      notes: ''
+    }));
+
+    onUpdateSubject({
+      ...subject,
+      subtopics: [...subject.subtopics, ...newSubtopics],
+      updatedAt: Date.now()
+    });
+
+    setBulkText('');
+    setIsBulkModalOpen(false);
     soundFx.playSuccess();
   };
 
@@ -110,15 +157,14 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
   };
 
   // Delete subtopic
-  const handleDeleteSubtopic = (subId: string, title: string) => {
-    if (window.confirm(`Delete subtopic "${title}"?`)) {
-      const remaining = subject.subtopics.filter(s => s.id !== subId);
-      onUpdateSubject({
-        ...subject,
-        subtopics: remaining,
-        updatedAt: Date.now()
-      });
-    }
+  const handleDeleteSubtopic = (subId: string) => {
+    const remaining = subject.subtopics.filter(s => s.id !== subId);
+    onUpdateSubject({
+      ...subject,
+      subtopics: remaining,
+      updatedAt: Date.now()
+    });
+    setDeleteConfirmSubId(null);
   };
 
   // Inline title edit
@@ -156,8 +202,8 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
               <span className="text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                 {subject.category} Stream
               </span>
-              <span className="text-xs text-slate-400">
-                {totalSubtopics} Subtopics
+              <span className="text-xs text-slate-400 font-medium">
+                {totalSubtopics} {totalSubtopics === 1 ? 'Topic' : 'Topics'}
               </span>
             </div>
             
@@ -186,18 +232,37 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
               <div className="flex items-center justify-between gap-2 mb-0.5">
                 <span className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 block font-medium">StudyTime</span>
                 {subject.loggedMinutes > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (window.confirm(`Reset StudyTime for "${subject.name}" to 0?`)) {
-                        onUpdateSubject({ ...subject, loggedMinutes: 0, updatedAt: Date.now() });
-                      }
-                    }}
-                    title="Reset StudyTime to 0"
-                    className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors p-0.5 rounded-sm hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                  </button>
+                  isResetTimeConfirmOpen ? (
+                    <div className="flex items-center gap-1 bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded-md border border-rose-200 dark:border-rose-900">
+                      <span className="text-[10px] text-rose-600 font-bold">Reset?</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onUpdateSubject({ ...subject, loggedMinutes: 0, updatedAt: Date.now() });
+                          setIsResetTimeConfirmOpen(false);
+                        }}
+                        className="text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded cursor-pointer"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsResetTimeConfirmOpen(false)}
+                        className="text-[10px] text-slate-500 hover:text-slate-700 px-1 cursor-pointer"
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setIsResetTimeConfirmOpen(true)}
+                      title="Reset StudyTime to 0"
+                      className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors p-0.5 rounded-sm hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                    </button>
+                  )
                 )}
               </div>
               <span className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
@@ -252,7 +317,7 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search subtopics or notes…"
+            placeholder="Search topics or notes…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
@@ -278,40 +343,98 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
         </div>
       </div>
 
-      {/* Quick Add Subtopic Form */}
-      <form onSubmit={handleAddSubtopic} className="flex flex-col sm:flex-row gap-2">
-        <input
-          id="quick-add-subtopic-input"
-          type="text"
-          placeholder="Add new subtopic, e.g. 'Diffraction & Polarisation of Light'…"
-          value={quickTitle}
-          onChange={(e) => setQuickTitle(e.target.value)}
-          className="flex-1 px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-xs"
-        />
-        <button
-          type="submit"
-          disabled={!quickTitle.trim()}
-          className="px-4 sm:px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer shadow-xs shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Subtopic</span>
-        </button>
-      </form>
+      {/* Add Topic Form + Bulk Add Button */}
+      <div className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleAddSubtopic} className="flex-1 flex gap-2">
+          <input
+            ref={inputRef}
+            id="quick-add-subtopic-input"
+            type="text"
+            placeholder={`Add topic to ${subject.name} (e.g. 'Unit 1: Foundations' or 'Calculus')…`}
+            value={quickTitle}
+            onChange={(e) => setQuickTitle(e.target.value)}
+            className="flex-1 px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500 shadow-xs"
+          />
+          <button
+            type="submit"
+            disabled={!quickTitle.trim()}
+            className="px-4 sm:px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer shadow-xs shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Topic</span>
+          </button>
+        </form>
 
-      {/* Subtopics List */}
+        <button
+          type="button"
+          onClick={() => setIsBulkModalOpen(true)}
+          className="px-3.5 py-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs shrink-0"
+        >
+          <ListPlus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <span>Paste Topics</span>
+        </button>
+      </div>
+
+      {/* Subtopics List or Empty State */}
       <div className="space-y-3">
         {filteredSubtopics.length === 0 ? (
-          <div className="p-8 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-500">
-            <BookOpen className="w-8 h-8 mx-auto mb-2 text-slate-400 opacity-60" />
-            <p className="font-medium text-slate-700 dark:text-slate-300">No subtopics found</p>
-            <p className="text-xs text-slate-400 mt-1">
-              {searchQuery ? 'Try clearing your search query' : 'Add your first subtopic using the input above!'}
-            </p>
-          </div>
+          totalSubtopics === 0 ? (
+            /* Dedicated, inviting empty state when 0 topics exist */
+            <div className="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 text-center shadow-xs">
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3.5 border border-blue-100 dark:border-blue-900">
+                <BookOpen className="w-7 h-7" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                No Topics in {subject.name} Yet
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto leading-relaxed">
+                Build your custom curriculum! Type a topic title in the input box above, or paste multiple topics at once.
+              </p>
+
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.focus()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl shadow-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add First Topic</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsBulkModalOpen(true)}
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <ListPlus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span>Paste Full Syllabus</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Search filter empty state */
+            <div className="p-8 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-500">
+              <Search className="w-8 h-8 mx-auto mb-2 text-slate-400 opacity-60" />
+              <p className="font-medium text-slate-700 dark:text-slate-300">No matching topics found</p>
+              <p className="text-xs text-slate-400 mt-1">
+                {searchQuery ? `No topics matched "${searchQuery}".` : 'Try changing your status filter.'}
+              </p>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="mt-3 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 dark:bg-blue-950/50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer"
+                >
+                  Clear search
+                </button>
+              )}
+            </div>
+          )
         ) : (
           filteredSubtopics.map((sub, index) => {
             const isNotesExpanded = expandedNotesId === sub.id;
             const isEditing = editingSubtopicId === sub.id;
+            const isDeleting = deleteConfirmSubId === sub.id;
 
             return (
               <div
@@ -452,15 +575,35 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
                         <Sparkles className="w-4 h-4" />
                       </button>
 
-                      {/* Delete subtopic */}
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteSubtopic(sub.id, sub.title)}
-                        title="Delete subtopic"
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {/* Delete subtopic with inline confirmation */}
+                      {isDeleting ? (
+                        <div className="flex items-center gap-1 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900 px-2 py-0.5 rounded-lg">
+                          <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">Delete?</span>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteSubtopic(sub.id)}
+                            className="px-1.5 py-0.5 text-[10px] font-bold bg-rose-600 text-white rounded cursor-pointer"
+                          >
+                            Yes
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirmSubId(null)}
+                            className="px-1 text-[10px] text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmSubId(sub.id)}
+                          title="Delete topic"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -522,6 +665,73 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
           })
         )}
       </div>
+
+      {/* Bulk Add Syllabus Topics Modal */}
+      {isBulkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-200 dark:border-blue-900">
+                  <ListPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    Bulk Add Topics to {subject.name}
+                  </h3>
+                  <p className="text-xs text-slate-400">Paste your syllabus or lesson list below</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBulkModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleBulkAdd} className="mt-4 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
+                  Topics (One topic per line)
+                </label>
+                <textarea
+                  rows={8}
+                  autoFocus
+                  value={bulkText}
+                  onChange={(e) => setBulkText(e.target.value)}
+                  placeholder={`1. Introduction & Core Foundations\n2. Mechanics & Dynamics\n3. Thermodynamics & Heat\n4. Wave Optics & Sound\n5. Modern Electronics`}
+                  className="w-full p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white text-xs sm:text-sm font-mono focus:outline-hidden focus:ring-2 focus:ring-blue-500 leading-relaxed"
+                />
+                <div className="mt-1.5 flex items-center justify-between text-xs text-slate-400">
+                  <span>Numbers and bullet marks will be cleaned automatically</span>
+                  <span className="font-semibold text-blue-600 dark:text-blue-400">
+                    {bulkText.split('\n').filter(l => l.trim().length > 0).length} topics detected
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsBulkModalOpen(false)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={bulkText.split('\n').filter(l => l.trim().length > 0).length === 0}
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  Add All Topics
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

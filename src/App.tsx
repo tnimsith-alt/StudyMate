@@ -108,11 +108,63 @@ export default function App() {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState<boolean>(false);
   const [savePillVisible, setSavePillVisible] = useState<boolean>(false);
 
-  // Trigger brief save notification
+  // Real-time synchronization helper for cross-tab and multi-window live updates
+  const broadcastSync = useCallback((event?: string) => {
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const bc = new BroadcastChannel('studymate_realtime_sync');
+        bc.postMessage({ event: event || 'DATA_CHANGED', timestamp: Date.now() });
+        bc.close();
+      }
+    } catch {
+      // BroadcastChannel unavailable
+    }
+  }, []);
+
+  // Trigger brief save notification & broadcast to other tabs in real-time
   const triggerSaveIndicator = useCallback(() => {
     setSavePillVisible(true);
+    broadcastSync('UPDATE');
     const timer = setTimeout(() => setSavePillVisible(false), 1500);
     return () => clearTimeout(timer);
+  }, [broadcastSync]);
+
+  // Real-time listener for multi-tab and multi-window synchronization
+  useEffect(() => {
+    const handleSyncFromOtherTab = () => {
+      setSubjects(loadStoredSubjects());
+      setTasks(loadStoredTasks());
+      setTaskHistory(loadStoredTaskHistory());
+      setSessions(loadStoredSessions());
+      setStats(loadStoredStats());
+      setExamResults(loadStoredExamResults());
+      setSubjectFiles(loadStoredSubjectFiles());
+      setActivityLog(loadStoredActivityLog());
+    };
+
+    let channel: BroadcastChannel | null = null;
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      try {
+        channel = new BroadcastChannel('studymate_realtime_sync');
+        channel.onmessage = () => {
+          handleSyncFromOtherTab();
+        };
+      } catch {
+        // BroadcastChannel unavailable
+      }
+    }
+
+    const handleStorageEvent = (e: StorageEvent) => {
+      if (e.key && e.key.startsWith('studymate_')) {
+        handleSyncFromOtherTab();
+      }
+    };
+    window.addEventListener('storage', handleStorageEvent);
+
+    return () => {
+      if (channel) channel.close();
+      window.removeEventListener('storage', handleStorageEvent);
+    };
   }, []);
 
 

@@ -102,12 +102,12 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
     onClose();
   };
 
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+
   const handleDelete = () => {
     if (editingSubject && onDelete) {
-      if (window.confirm(`Are you sure you want to delete "${editingSubject.name}"? All subtopics will also be removed.`)) {
-        onDelete(editingSubject.id);
-        onClose();
-      }
+      onDelete(editingSubject.id);
+      onClose();
     }
   };
 
@@ -262,14 +262,34 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
           {/* Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
             {editingSubject && onDelete ? (
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="flex items-center gap-1.5 px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span>Delete Subject</span>
-              </button>
+              isConfirmingDelete ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-rose-600 font-semibold">Delete "{editingSubject.name}"?</span>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    className="px-2.5 py-1 text-xs font-bold bg-rose-600 text-white rounded-lg hover:bg-rose-500 cursor-pointer shadow-xs"
+                  >
+                    Yes, Delete
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsConfirmingDelete(false)}
+                    className="px-2 py-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmingDelete(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span>Delete Subject</span>
+                </button>
+              )
             ) : <div />}
 
             <div className="flex items-center gap-2">
