@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, BookOpen, Clock, CheckCircle2, History, Sparkles, 
   BarChart2, FolderOpen, Save, Download, Plus, ChevronRight,
-  Award, Flame, Target, FileText, Layers, Smartphone, Check
+  Award, Flame, Target, FileText, Layers, Smartphone, Check, Home
 } from 'lucide-react';
 import { Subject, UserStats, StudyTask, ExamResult, SubjectFile } from '../types';
 import { calculateSubjectProgress } from '../utils/storage';
@@ -10,8 +10,8 @@ import { calculateSubjectProgress } from '../utils/storage';
 interface SlideBarDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  activeSection: 'syllabus' | 'timer' | 'tasks' | 'history' | 'tutor' | 'exams' | 'files';
-  onSelectSection: (section: 'syllabus' | 'timer' | 'tasks' | 'history' | 'tutor' | 'exams' | 'files') => void;
+  activeSection: 'home' | 'syllabus' | 'timer' | 'tasks' | 'history' | 'tutor' | 'exams' | 'files';
+  onSelectSection: (section: 'home' | 'syllabus' | 'timer' | 'tasks' | 'history' | 'tutor' | 'exams' | 'files') => void;
   subjects: Subject[];
   activeSubjectId: string;
   onSelectSubject: (id: string) => void;
@@ -96,6 +96,14 @@ export function SlideBarDrawer({
   const pendingTasks = tasks.filter(t => !t.done).length;
 
   const navItems = [
+    {
+      id: 'home' as const,
+      label: 'Home Dashboard',
+      sublabel: 'Overview & workspace hub',
+      icon: Home,
+      badge: 'Hub',
+      badgeColor: 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+    },
     {
       id: 'syllabus' as const,
       label: 'Subjects & Syllabus',
