@@ -23,8 +23,8 @@ export const AITutor: React.FC<AITutorProps> = ({
 
   const activeSubject = subjects.find(s => s.id === selectedSubjectId);
 
-  // Suggested prompt pills
-  const samplePrompts = [
+  // Suggested academic topics
+  const suggestedPrompts = [
     { en: 'Explain Newton’s second law with A/L past paper example', si: 'නිව්ටන්ගේ දෙවන නියමය සහ එහි ප්‍රායෝගික යෙදීම් පැහැදිලි කරන්න' },
     { en: 'Step-by-step method to solve Integration by Parts', si: 'කොටස් වශයෙන් අනුකලනය පියවරෙන් පියවර පැහැදිලි කරන්න' },
     { en: 'Summarize SN1 vs SN2 organic reaction mechanisms', si: 'SN1 සහ SN2 ප්‍රතික්‍රියා යාන්ත්‍රණ අතර වෙනස්කම් පැහැදිලි කරන්න' },
@@ -151,13 +151,13 @@ export const AITutor: React.FC<AITutorProps> = ({
         </div>
       </div>
 
-      {/* Suggested Prompts */}
+      {/* Suggested Academic Topics */}
       <div className="my-4">
         <span className="text-xs font-semibold text-slate-400 block mb-2">
-          {language === 'si' ? 'උදාහරණ ප්‍රශ්න:' : 'Suggested topics:'}
+          {language === 'si' ? 'යෝජිත විෂය ප්‍රශ්න:' : 'Suggested topics:'}
         </span>
         <div className="flex flex-wrap gap-1.5">
-          {samplePrompts.map((p, idx) => {
+          {suggestedPrompts.map((p, idx) => {
             const label = language === 'si' ? p.si : p.en;
             return (
               <button

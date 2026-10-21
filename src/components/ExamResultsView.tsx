@@ -21,7 +21,6 @@ interface ExamResultsViewProps {
   onAskAITutorAboutTopic?: (subjectName: string, examNotes: string) => void;
   onBackToSyllabus?: () => void;
   onResetExamResults?: () => void;
-  onRestoreDefaultExamResults?: () => void;
   onClearSubjectExamResults?: (subjectId: string) => void;
 }
 
@@ -34,7 +33,6 @@ export function ExamResultsView({
   onAskAITutorAboutTopic,
   onBackToSyllabus,
   onResetExamResults,
-  onRestoreDefaultExamResults,
   onClearSubjectExamResults
 }: ExamResultsViewProps) {
   // State
@@ -491,59 +489,79 @@ export function ExamResultsView({
           )}
 
           {chartMode === 'subjects' && (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={subjectComparisonData} margin={{ top: 10, right: 20, left: -20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-                <XAxis dataKey="subject" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(v) => `${v}%`} />
-                <Tooltip 
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const d = payload[0].payload;
-                      return (
-                        <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl text-xs space-y-1 border border-slate-700">
-                          <div className="font-bold text-sm text-blue-400">{d.subject}</div>
-                          <div>Average Score: <strong className="text-emerald-400">{d.average}%</strong></div>
-                          <div>Latest Test: <strong>{d.latest}%</strong></div>
-                          <div>Logged Tests: <strong>{d.testsCount}</strong></div>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <ReferenceLine 
-                  y={75} 
-                  stroke="#10b981" 
-                  strokeDasharray="4 4" 
-                  label={{ value: "A Grade Target (75%)", position: 'top', fill: '#10b981', fontSize: 10 }} 
-                />
-                <Bar dataKey="average" name="Average Score" fill="#3b82f6" radius={[6, 6, 0, 0]}>
-                  {subjectComparisonData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={entry.average >= 75 ? '#10b981' : entry.average >= 65 ? '#3b82f6' : '#f59e0b'} 
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            examResults.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={subjectComparisonData} margin={{ top: 10, right: 20, left: -20, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                  <XAxis dataKey="subject" tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#94a3b8' }} tickFormatter={(v) => `${v}%`} />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const d = payload[0].payload;
+                        return (
+                          <div className="bg-slate-900 text-white p-3 rounded-xl shadow-xl text-xs space-y-1 border border-slate-700">
+                            <div className="font-bold text-sm text-blue-400">{d.subject}</div>
+                            <div>Average Score: <strong className="text-emerald-400">{d.average}%</strong></div>
+                            <div>Latest Test: <strong>{d.latest}%</strong></div>
+                            <div>Logged Tests: <strong>{d.testsCount}</strong></div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <ReferenceLine 
+                    y={75} 
+                    stroke="#10b981" 
+                    strokeDasharray="4 4" 
+                    label={{ value: "A Grade Target (75%)", position: 'top', fill: '#10b981', fontSize: 10 }} 
+                  />
+                  <Bar dataKey="average" name="Average Score" fill="#3b82f6" radius={[6, 6, 0, 0]}>
+                    {subjectComparisonData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.average >= 75 ? '#10b981' : entry.average >= 65 ? '#3b82f6' : '#f59e0b'} 
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                <BarChart2 className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-2" />
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">No subject test data to compare</p>
+                <p className="text-xs text-slate-400 mt-1 max-w-sm">
+                  Log your test scores across subjects to view average performance comparisons.
+                </p>
+              </div>
+            )
           )}
 
           {chartMode === 'distribution' && (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={gradeDistributionData} margin={{ top: 10, right: 20, left: -20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-                <XAxis dataKey="grade" tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} />
-                <Tooltip />
-                <Bar dataKey="count" name="Number of Tests" radius={[6, 6, 0, 0]}>
-                  {gradeDistributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            examResults.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={gradeDistributionData} margin={{ top: 10, right: 20, left: -20, bottom: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                  <XAxis dataKey="grade" tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                  <Tooltip />
+                  <Bar dataKey="count" name="Number of Tests" radius={[6, 6, 0, 0]}>
+                    {gradeDistributionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center p-6">
+                <BarChart2 className="w-10 h-10 text-slate-300 dark:text-slate-600 mb-2" />
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">No grade distribution data</p>
+                <p className="text-xs text-slate-400 mt-1 max-w-sm">
+                  Log exam scores to see your distribution across A, B, C, S, and F grades.
+                </p>
+              </div>
+            )
           )}
         </div>
       </div>
@@ -654,8 +672,28 @@ export function ExamResultsView({
           })}
 
           {filteredResults.length === 0 && (
-            <div className="text-center py-8 text-slate-400 text-xs">
-              No exam results match your current filter.
+            <div className="text-center py-12 px-4 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                {examResults.length === 0 ? 'No exam marks logged yet' : 'No exam results match your current filter'}
+              </div>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                {examResults.length === 0
+                  ? 'Record your term evaluations, model exams, and past paper practice marks to track your progress toward your target grades.'
+                  : 'Try changing the subject or exam type filter above.'}
+              </p>
+              {examResults.length === 0 && (
+                <button
+                  type="button"
+                  onClick={handleOpenAddModal}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Log First Score</span>
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -910,33 +948,6 @@ export function ExamResultsView({
                     </div>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
-                </button>
-              )}
-
-              {/* Option 3: Restore Default Sample Exam Data */}
-              {onRestoreDefaultExamResults && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onRestoreDefaultExamResults();
-                    setIsResetModalOpen(false);
-                  }}
-                  className="w-full text-left p-3 rounded-xl border border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer flex items-center justify-between group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <RefreshCw className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                        Restore Default Sample Exam Records
-                      </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                        Populate with starter A/L test scores & timeline
-                      </div>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600" />
                 </button>
               )}
             </div>

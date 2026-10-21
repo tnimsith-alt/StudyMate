@@ -95,10 +95,7 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
         loggedMinutes: 0,
         notes: notes.trim(),
         updatedAt: Date.now(),
-        subtopics: [
-          { id: 'sub-init-1', title: 'Chapter 1: Fundamentals & Theory', status: 'not_started', progress: 0, confidence: 3, pastPapersDone: 0 },
-          { id: 'sub-init-2', title: 'Chapter 2: Core Applications', status: 'not_started', progress: 0, confidence: 3, pastPapersDone: 0 },
-        ]
+        subtopics: []
       };
       onSave(newSubject);
     }

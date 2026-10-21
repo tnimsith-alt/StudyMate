@@ -452,12 +452,6 @@ export default function App() {
     triggerSaveIndicator();
   };
 
-  const handleRestoreDefaultExamResults = () => {
-    setExamResults(DEFAULT_EXAM_RESULTS);
-    saveStoredExamResults(DEFAULT_EXAM_RESULTS);
-    triggerSaveIndicator();
-  };
-
   const handleClearSubjectExamResults = (subjectId: string) => {
     setExamResults(prev => {
       const next = prev.filter(r => r.subjectId !== subjectId);
@@ -924,7 +918,6 @@ export default function App() {
               onUpdateExamResult={handleUpdateExamResult}
               onDeleteExamResult={handleDeleteExamResult}
               onResetExamResults={handleResetExamResults}
-              onRestoreDefaultExamResults={handleRestoreDefaultExamResults}
               onClearSubjectExamResults={handleClearSubjectExamResults}
               onBackToSyllabus={() => setActiveSection('syllabus')}
               onAskAITutorAboutTopic={(subjectName, examNotes) => {

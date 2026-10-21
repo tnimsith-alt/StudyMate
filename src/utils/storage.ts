@@ -18,22 +18,22 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     color: 'blue',
     icon: 'atom',
     targetHours: 120,
-    loggedMinutes: 480,
+    loggedMinutes: 0,
     updatedAt: Date.now(),
-    notes: 'Focus on mechanics numerical problems and electromagnetic induction graphs.',
+    notes: '',
     subtopics: [
-      { id: 'sub-p-1', title: 'Units, Dimensions & Errors', status: 'completed', progress: 100, confidence: 5, pastPapersDone: 8 },
-      { id: 'sub-p-2', title: 'Mechanics: Kinematics & Projectiles', status: 'completed', progress: 95, confidence: 5, pastPapersDone: 12 },
-      { id: 'sub-p-3', title: 'Newtonian Dynamics & Momentum', status: 'in_progress', progress: 80, confidence: 4, pastPapersDone: 6 },
-      { id: 'sub-p-4', title: 'Circular Motion & Rotational Dynamics', status: 'in_progress', progress: 70, confidence: 4, pastPapersDone: 5 },
-      { id: 'sub-p-5', title: 'Oscillations & Simple Harmonic Motion', status: 'in_progress', progress: 65, confidence: 3, pastPapersDone: 4 },
-      { id: 'sub-p-6', title: 'Mechanical Waves & Sound (Doppler Effect)', status: 'in_progress', progress: 60, confidence: 3, pastPapersDone: 5 },
-      { id: 'sub-p-7', title: 'Geometrical & Physical Optics', status: 'not_started', progress: 40, confidence: 2, pastPapersDone: 2 },
-      { id: 'sub-p-8', title: 'Thermal Physics & Kinetic Theory', status: 'in_progress', progress: 75, confidence: 4, pastPapersDone: 7 },
-      { id: 'sub-p-9', title: 'Gravitational & Electrostatic Fields', status: 'not_started', progress: 35, confidence: 2, pastPapersDone: 1 },
-      { id: 'sub-p-10', title: 'Current Electricity & Circuits', status: 'completed', progress: 90, confidence: 5, pastPapersDone: 10 },
-      { id: 'sub-p-11', title: 'Electromagnetism & AC Circuits', status: 'not_started', progress: 20, confidence: 2, pastPapersDone: 1 },
-      { id: 'sub-p-12', title: 'Electronics & Modern Physics', status: 'not_started', progress: 15, confidence: 1, pastPapersDone: 0 }
+      { id: 'sub-p-1', title: 'Units, Dimensions & Errors', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-2', title: 'Mechanics: Kinematics & Projectiles', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-3', title: 'Newtonian Dynamics & Momentum', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-4', title: 'Circular Motion & Rotational Dynamics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-5', title: 'Oscillations & Simple Harmonic Motion', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-6', title: 'Mechanical Waves & Sound (Doppler Effect)', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-7', title: 'Geometrical & Physical Optics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-8', title: 'Thermal Physics & Kinetic Theory', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-9', title: 'Gravitational & Electrostatic Fields', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-10', title: 'Current Electricity & Circuits', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-11', title: 'Electromagnetism & AC Circuits', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-p-12', title: 'Electronics & Modern Physics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
     ]
   },
   {
@@ -43,22 +43,22 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     color: 'emerald',
     icon: 'flask',
     targetHours: 110,
-    loggedMinutes: 390,
+    loggedMinutes: 0,
     updatedAt: Date.now(),
-    notes: 'Review organic reaction flowcharts daily. Practice buffer solution calculations.',
+    notes: '',
     subtopics: [
-      { id: 'sub-c-1', title: 'Atomic Structure & Quantum Numbers', status: 'completed', progress: 100, confidence: 5, pastPapersDone: 9 },
-      { id: 'sub-c-2', title: 'Chemical Bonding & Hybridization', status: 'completed', progress: 95, confidence: 5, pastPapersDone: 11 },
-      { id: 'sub-c-3', title: 'Chemical Calculations & Mole Concept', status: 'completed', progress: 90, confidence: 4, pastPapersDone: 8 },
-      { id: 'sub-c-4', title: 'Gaseous State & Real Gases', status: 'in_progress', progress: 75, confidence: 4, pastPapersDone: 6 },
-      { id: 'sub-c-5', title: 'Chemical Energetics & Thermodynamics', status: 'in_progress', progress: 65, confidence: 3, pastPapersDone: 4 },
-      { id: 'sub-c-6', title: 'Chemical & Phase Equilibrium', status: 'in_progress', progress: 60, confidence: 3, pastPapersDone: 5 },
-      { id: 'sub-c-7', title: 'Ionic Equilibrium, pH & Buffers', status: 'in_progress', progress: 50, confidence: 3, pastPapersDone: 3 },
-      { id: 'sub-c-8', title: 'Inorganic Chemistry: s & p Block', status: 'in_progress', progress: 55, confidence: 3, pastPapersDone: 4 },
-      { id: 'sub-c-9', title: 'Transition Metals (d-block Complexes)', status: 'not_started', progress: 30, confidence: 2, pastPapersDone: 1 },
-      { id: 'sub-c-10', title: 'Organic Chemistry: Hydrocarbons & Halides', status: 'in_progress', progress: 60, confidence: 3, pastPapersDone: 5 },
-      { id: 'sub-c-11', title: 'Carbonyls, Acids & Nitrogen Derivatives', status: 'not_started', progress: 35, confidence: 2, pastPapersDone: 2 },
-      { id: 'sub-c-12', title: 'Industrial & Environmental Chemistry', status: 'not_started', progress: 20, confidence: 2, pastPapersDone: 1 }
+      { id: 'sub-c-1', title: 'Atomic Structure & Quantum Numbers', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-2', title: 'Chemical Bonding & Hybridization', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-3', title: 'Chemical Calculations & Mole Concept', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-4', title: 'Gaseous State & Real Gases', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-5', title: 'Chemical Energetics & Thermodynamics', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-6', title: 'Chemical & Phase Equilibrium', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-7', title: 'Ionic Equilibrium, pH & Buffers', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-8', title: 'Inorganic Chemistry: s & p Block', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-9', title: 'Transition Metals (d-block Complexes)', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-10', title: 'Organic Chemistry: Hydrocarbons & Halides', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-11', title: 'Carbonyls, Acids & Nitrogen Derivatives', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-c-12', title: 'Industrial & Environmental Chemistry', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
     ]
   },
   {
@@ -68,22 +68,22 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     color: 'purple',
     icon: 'calculator',
     targetHours: 130,
-    loggedMinutes: 520,
+    loggedMinutes: 0,
     updatedAt: Date.now(),
-    notes: 'Master substitution techniques in integration and trigonometric transformation proofs.',
+    notes: '',
     subtopics: [
-      { id: 'sub-m-1', title: 'Real Numbers & Mathematical Induction', status: 'completed', progress: 100, confidence: 5, pastPapersDone: 10 },
-      { id: 'sub-m-2', title: 'Quadratic Equations & Polynomials', status: 'completed', progress: 95, confidence: 5, pastPapersDone: 12 },
-      { id: 'sub-m-3', title: 'Inequalities & Modulus Functions', status: 'completed', progress: 90, confidence: 4, pastPapersDone: 8 },
-      { id: 'sub-m-4', title: 'Trigonometric Functions & Proofs', status: 'in_progress', progress: 85, confidence: 4, pastPapersDone: 9 },
-      { id: 'sub-m-5', title: 'Limits & Differentiation Techniques', status: 'in_progress', progress: 80, confidence: 4, pastPapersDone: 7 },
-      { id: 'sub-m-6', title: 'Applications of Derivatives (Max/Min)', status: 'in_progress', progress: 70, confidence: 3, pastPapersDone: 5 },
-      { id: 'sub-m-7', title: 'Definite & Indefinite Integration', status: 'in_progress', progress: 65, confidence: 3, pastPapersDone: 6 },
-      { id: 'sub-m-8', title: 'Straight Lines & Circles', status: 'in_progress', progress: 75, confidence: 4, pastPapersDone: 6 },
-      { id: 'sub-m-9', title: 'Matrices & Determinants', status: 'in_progress', progress: 70, confidence: 4, pastPapersDone: 5 },
-      { id: 'sub-m-10', title: 'Permutations & Combinations', status: 'not_started', progress: 35, confidence: 2, pastPapersDone: 2 },
-      { id: 'sub-m-11', title: 'Binomial Theorem', status: 'in_progress', progress: 60, confidence: 3, pastPapersDone: 4 },
-      { id: 'sub-m-12', title: 'Complex Numbers & De Moivre Theorem', status: 'not_started', progress: 20, confidence: 1, pastPapersDone: 1 }
+      { id: 'sub-m-1', title: 'Real Numbers & Mathematical Induction', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-2', title: 'Quadratic Equations & Polynomials', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-3', title: 'Inequalities & Modulus Functions', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-4', title: 'Trigonometric Functions & Proofs', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-5', title: 'Limits & Differentiation Techniques', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-6', title: 'Applications of Derivatives (Max/Min)', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-7', title: 'Definite & Indefinite Integration', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-8', title: 'Straight Lines & Circles', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-9', title: 'Matrices & Determinants', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-10', title: 'Permutations & Combinations', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-11', title: 'Binomial Theorem', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-m-12', title: 'Complex Numbers & De Moivre Theorem', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
     ]
   },
   {
@@ -93,187 +93,44 @@ export const DEFAULT_SUBJECTS: Subject[] = [
     color: 'amber',
     icon: 'book',
     targetHours: 110,
-    loggedMinutes: 340,
+    loggedMinutes: 0,
     updatedAt: Date.now(),
-    notes: 'Draw clear free-body diagrams first. Check dimensions before final answers.',
+    notes: '',
     subtopics: [
-      { id: 'sub-a-1', title: 'Vectors & Force Resolution', status: 'completed', progress: 95, confidence: 5, pastPapersDone: 10 },
-      { id: 'sub-a-2', title: 'Rectilinear & Relative Motion', status: 'in_progress', progress: 80, confidence: 4, pastPapersDone: 8 },
-      { id: 'sub-a-3', title: 'Newton\'s Laws of Motion & Friction', status: 'in_progress', progress: 75, confidence: 4, pastPapersDone: 7 },
-      { id: 'sub-a-4', title: 'Work, Power, Energy & Impulse', status: 'in_progress', progress: 65, confidence: 3, pastPapersDone: 5 },
-      { id: 'sub-a-5', title: 'Circular Motion & Simple Pendulum', status: 'not_started', progress: 40, confidence: 2, pastPapersDone: 3 },
-      { id: 'sub-a-6', title: 'Equilibrium of Coplanar Forces & Rigid Bodies', status: 'in_progress', progress: 60, confidence: 3, pastPapersDone: 4 },
-      { id: 'sub-a-7', title: 'Centre of Gravity & Frameworks', status: 'not_started', progress: 30, confidence: 2, pastPapersDone: 2 },
-      { id: 'sub-a-8', title: 'Jointed Rods & Virtual Work', status: 'not_started', progress: 20, confidence: 1, pastPapersDone: 1 },
-      { id: 'sub-a-9', title: 'Measures of Central Tendency & Dispersion', status: 'in_progress', progress: 70, confidence: 4, pastPapersDone: 5 },
-      { id: 'sub-a-10', title: 'Probability & Conditional Probability', status: 'not_started', progress: 35, confidence: 2, pastPapersDone: 2 }
+      { id: 'sub-a-1', title: 'Vectors & Force Resolution', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-2', title: 'Rectilinear & Relative Motion', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-3', title: 'Newton\'s Laws of Motion & Friction', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-4', title: 'Work, Power, Energy & Impulse', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-5', title: 'Circular Motion & Simple Pendulum', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-6', title: 'Equilibrium of Coplanar Forces & Rigid Bodies', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-7', title: 'Centre of Gravity & Frameworks', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-8', title: 'Jointed Rods & Virtual Work', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-9', title: 'Measures of Central Tendency & Dispersion', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 },
+      { id: 'sub-a-10', title: 'Probability & Conditional Probability', status: 'not_started', progress: 0, confidence: 0, pastPapersDone: 0 }
     ]
   }
 ];
 
-export const DEFAULT_TASKS: StudyTask[] = [
-  { id: 'task-1', text: 'Physics — Review Kinematics projectile formulas & do 3 past paper questions', done: false, subjectId: 'subj-physics', priority: 'high', createdAt: Date.now() - 3600000 },
-  { id: 'task-2', text: 'Chemistry — Memorize Organic SN1 vs SN2 mechanism pathways', done: true, subjectId: 'subj-chemistry', priority: 'high', createdAt: Date.now() - 7200000, completedAt: Date.now() - 3600000 },
-  { id: 'task-3', text: 'Pure Maths — Complete Trigonometry transformation exercise set', done: false, subjectId: 'subj-pure-maths', priority: 'medium', createdAt: Date.now() - 10800000 },
-  { id: 'task-4', text: 'Applied Maths — Friction on inclined plane problem set', done: false, subjectId: 'subj-applied-maths', priority: 'medium', createdAt: Date.now() - 14400000 },
-  { id: 'task-5', text: 'Past paper review: 2024 Physics Structured Essay Section A', done: false, subjectId: 'subj-physics', priority: 'high', createdAt: Date.now() - 18000000 }
-];
+export const DEFAULT_TASKS: StudyTask[] = [];
 
 export const DEFAULT_TASK_HISTORY: StudyTask[] = [];
 
-export const DEFAULT_EXAM_RESULTS: ExamResult[] = [
-  {
-    id: 'exam-1',
-    subjectId: 'subj-physics',
-    examName: '1st Term Evaluation',
-    score: 78,
-    maxScore: 100,
-    percentage: 78,
-    grade: 'A',
-    examType: 'term_test',
-    date: '2026-03-15',
-    notes: 'Good performance in Mechanics; need more revision in Wave Doppler effect.',
-    createdAt: Date.now() - 86400000 * 60
-  },
-  {
-    id: 'exam-2',
-    subjectId: 'subj-chemistry',
-    examName: '1st Term Evaluation',
-    score: 72,
-    maxScore: 100,
-    percentage: 72,
-    grade: 'B',
-    examType: 'term_test',
-    date: '2026-03-18',
-    notes: 'Lost marks on buffer calculations and transition metal isomers.',
-    createdAt: Date.now() - 86400000 * 57
-  },
-  {
-    id: 'exam-3',
-    subjectId: 'subj-pure-maths',
-    examName: '1st Term Evaluation',
-    score: 85,
-    maxScore: 100,
-    percentage: 85,
-    grade: 'A',
-    examType: 'term_test',
-    date: '2026-03-20',
-    notes: 'Excellent in Calculus. Fast solution on trigonometric identities.',
-    createdAt: Date.now() - 86400000 * 55
-  },
-  {
-    id: 'exam-4',
-    subjectId: 'subj-applied-maths',
-    examName: '1st Term Evaluation',
-    score: 68,
-    maxScore: 100,
-    percentage: 68,
-    grade: 'B',
-    examType: 'term_test',
-    date: '2026-03-22',
-    notes: 'Rigid body equilibrium problem had numerical calculation mistake.',
-    createdAt: Date.now() - 86400000 * 53
-  },
-  {
-    id: 'exam-5',
-    subjectId: 'subj-physics',
-    examName: 'Mid-Year Model Paper 1',
-    score: 84,
-    maxScore: 100,
-    percentage: 84,
-    grade: 'A',
-    examType: 'model_exam',
-    date: '2026-06-10',
-    notes: 'Improved in optics and thermal physics. Scored 42/50 in MCQs.',
-    createdAt: Date.now() - 86400000 * 30
-  },
-  {
-    id: 'exam-6',
-    subjectId: 'subj-chemistry',
-    examName: 'Mid-Year Model Paper 1',
-    score: 81,
-    maxScore: 100,
-    percentage: 81,
-    grade: 'A',
-    examType: 'model_exam',
-    date: '2026-06-12',
-    notes: 'Reached A grade target! Organic synthesis questions fully correct.',
-    createdAt: Date.now() - 86400000 * 28
-  },
-  {
-    id: 'exam-7',
-    subjectId: 'subj-pure-maths',
-    examName: 'Mid-Year Model Paper 1',
-    score: 91,
-    maxScore: 100,
-    percentage: 91,
-    grade: 'A',
-    examType: 'model_exam',
-    date: '2026-06-15',
-    notes: 'Outstanding score. All 5 essay questions completed with full marks.',
-    createdAt: Date.now() - 86400000 * 25
-  },
-  {
-    id: 'exam-8',
-    subjectId: 'subj-applied-maths',
-    examName: 'Mid-Year Model Paper 1',
-    score: 79,
-    maxScore: 100,
-    percentage: 79,
-    grade: 'A',
-    examType: 'model_exam',
-    date: '2026-06-17',
-    notes: 'Friction and relative velocity problems solved accurately.',
-    createdAt: Date.now() - 86400000 * 23
-  }
-];
+export const DEFAULT_EXAM_RESULTS: ExamResult[] = [];
 
-export const DEFAULT_SUBJECT_FILES: SubjectFile[] = [
-  {
-    id: 'file-1',
-    subjectId: 'subj-physics',
-    name: 'Physics_Mechanics_Formulas_Summary.txt',
-    size: 2048,
-    type: 'text/plain',
-    category: 'formula_sheet',
-    textContent: `# Physics Mechanics Core Formulas\n\n## 1. Kinematics\n- v = u + at\n- s = ((u + v) / 2) * t\n- s = ut + 0.5 * a * t^2\n- v^2 = u^2 + 2as\n\n## 2. Projectiles\n- Time of Flight: T = (2u sin θ) / g\n- Maximum Height: H = (u^2 sin^2 θ) / (2g)\n- Range: R = (u^2 sin 2θ) / g\n\n## 3. Newton's 2nd Law & Momentum\n- F_net = ma = dp/dt\n- Linear Momentum: p = mv\n- Impulse: J = F * Δt = Δp\n\n## 4. Circular Motion\n- Angular velocity: ω = v / r\n- Centripetal acceleration: a = v^2 / r = r * ω^2\n- Centripetal force: F = (m * v^2) / r`,
-    uploadedAt: Date.now() - 86400000 * 14,
-    tags: ['Mechanics', 'Formulas', 'A/L Physics'],
-    description: 'Quick reference sheet for mechanics formulas & derivations.'
-  },
-  {
-    id: 'file-2',
-    subjectId: 'subj-chemistry',
-    name: 'Organic_Chemistry_Reaction_Flowchart.txt',
-    size: 3120,
-    type: 'text/plain',
-    category: 'short_notes',
-    textContent: `# Organic Chemistry Conversions & Reagents\n\n## 1. Alkyl Halides -> Alcohols\n- Reagent: Aqueous NaOH or KOH (Warm)\n- Type: Nucleophilic Substitution (SN1/SN2)\n\n## 2. Alcohols -> Aldehydes / Ketones\n- Primary alcohol: PCC / CH2Cl2 -> Aldehyde\n- Primary alcohol: Acidified K2Cr2O7 (reflux) -> Carboxylic Acid\n- Secondary alcohol: Acidified K2Cr2O7 -> Ketone\n\n## 3. Carbonyls -> Alcohols\n- Reagent: NaBH4 in MeOH or LiAlH4 in dry ether\n\n## 4. Carboxylic Acids -> Acyl Chlorides\n- Reagent: SOCl2 or PCl5`,
-    uploadedAt: Date.now() - 86400000 * 10,
-    tags: ['Organic', 'Flowchart', 'Reagents'],
-    description: 'Comprehensive organic chemistry reagents cheat sheet.'
-  },
-  {
-    id: 'file-3',
-    subjectId: 'subj-pure-maths',
-    name: 'Trigonometry_Standard_Identities_Summary.txt',
-    size: 1840,
-    type: 'text/plain',
-    category: 'formula_sheet',
-    textContent: `# Pure Maths Trigonometry Essentials\n\n## 1. Pythagorean Identities\n- sin^2 θ + cos^2 θ = 1\n- 1 + tan^2 θ = sec^2 θ\n- 1 + cot^2 θ = cosec^2 θ\n\n## 2. Compound Angles\n- sin(A ± B) = sin A cos B ± cos A sin B\n- cos(A ± B) = cos A cos B ∓ sin A sin B\n- tan(A ± B) = (tan A ± tan B) / (1 ∓ tan A tan B)\n\n## 3. Double Angle Formulas\n- sin 2A = 2 sin A cos A\n- cos 2A = cos^2 A - sin^2 A = 2 cos^2 A - 1 = 1 - 2 sin^2 A\n- tan 2A = (2 tan A) / (1 - tan^2 A)`,
-    uploadedAt: Date.now() - 86400000 * 7,
-    tags: ['Trigonometry', 'Pure Maths', 'Formulas'],
-    description: 'Master trigonometric identities and product-to-sum transformations.'
-  }
-];
+export const DEFAULT_SUBJECT_FILES: SubjectFile[] = [];
 
 export const DEFAULT_STATS: UserStats = {
-  streak: 3,
-  lastStudyDate: new Date().toISOString().split('T')[0],
-  totalMinutesStudied: 1730,
-  todayMinutesStudied: 45,
-  tasksCompletedTotal: 18
+  streak: 0,
+  lastStudyDate: '',
+  totalMinutesStudied: 0,
+  todayMinutesStudied: 0,
+  tasksCompletedTotal: 0
 };
+
+// Legacy mock identifiers to sanitize from previous test sessions
+const LEGACY_MOCK_TASK_IDS = new Set(['task-1', 'task-2', 'task-3', 'task-4', 'task-5']);
+const LEGACY_MOCK_EXAM_IDS = new Set(['exam-1', 'exam-2', 'exam-3', 'exam-4', 'exam-5', 'exam-6', 'exam-7', 'exam-8']);
+const LEGACY_MOCK_FILE_IDS = new Set(['file-1', 'file-2', 'file-3']);
 
 const STORAGE_KEYS = {
   SUBJECTS: 'studymate_subjects_v2',
@@ -293,7 +150,15 @@ export function loadStoredSubjects(): Subject[] {
     const raw = localStorage.getItem(STORAGE_KEYS.SUBJECTS);
     if (!raw) return DEFAULT_SUBJECTS;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      // Clean legacy mock progress if present from original template (e.g. 480 logged minutes or sample notes)
+      const isLegacyTemplate = parsed.some(s => s.id === 'subj-physics' && s.loggedMinutes === 480);
+      if (isLegacyTemplate) {
+        saveStoredSubjects(DEFAULT_SUBJECTS);
+        return DEFAULT_SUBJECTS;
+      }
+      return parsed;
+    }
     return DEFAULT_SUBJECTS;
   } catch (e) {
     console.error('Failed to load subjects', e);
@@ -314,7 +179,13 @@ export function loadStoredTasks(): StudyTask[] {
     const raw = localStorage.getItem(STORAGE_KEYS.TASKS);
     if (!raw) return DEFAULT_TASKS;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
+    if (Array.isArray(parsed)) {
+      const cleaned = parsed.filter(t => !LEGACY_MOCK_TASK_IDS.has(t.id));
+      if (cleaned.length !== parsed.length) {
+        saveStoredTasks(cleaned);
+      }
+      return cleaned;
+    }
     return DEFAULT_TASKS;
   } catch (e) {
     console.error('Failed to load tasks', e);
@@ -335,6 +206,13 @@ export function loadStoredStats(): UserStats {
     const raw = localStorage.getItem(STORAGE_KEYS.STATS);
     if (!raw) return DEFAULT_STATS;
     const stats: UserStats = JSON.parse(raw);
+
+    // Sanitize legacy mock stats
+    if (stats.totalMinutesStudied === 1730 && stats.tasksCompletedTotal === 18) {
+      saveStoredStats(DEFAULT_STATS);
+      return DEFAULT_STATS;
+    }
+
     const today = new Date().toISOString().split('T')[0];
 
     // Reset today minutes if day rolled over
@@ -454,7 +332,13 @@ export function loadStoredExamResults(): ExamResult[] {
     const raw = localStorage.getItem(STORAGE_KEYS.EXAM_RESULTS);
     if (!raw) return DEFAULT_EXAM_RESULTS;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
+    if (Array.isArray(parsed)) {
+      const cleaned = parsed.filter(r => !LEGACY_MOCK_EXAM_IDS.has(r.id));
+      if (cleaned.length !== parsed.length) {
+        saveStoredExamResults(cleaned);
+      }
+      return cleaned;
+    }
     return DEFAULT_EXAM_RESULTS;
   } catch (e) {
     console.error('Failed to load exam results', e);
@@ -475,7 +359,13 @@ export function loadStoredSubjectFiles(): SubjectFile[] {
     const raw = localStorage.getItem(STORAGE_KEYS.SUBJECT_FILES);
     if (!raw) return DEFAULT_SUBJECT_FILES;
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
+    if (Array.isArray(parsed)) {
+      const cleaned = parsed.filter(f => !LEGACY_MOCK_FILE_IDS.has(f.id));
+      if (cleaned.length !== parsed.length) {
+        saveStoredSubjectFiles(cleaned);
+      }
+      return cleaned;
+    }
     return DEFAULT_SUBJECT_FILES;
   } catch (e) {
     console.error('Failed to load subject files', e);

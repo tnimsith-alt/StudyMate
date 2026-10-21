@@ -6,7 +6,6 @@ import {
   Sparkles, Layers, ListFilter
 } from 'lucide-react';
 import { StudyTask, Subject, TimerSession, ExamResult, SubjectFile, UserStats, ActivityLogEntry } from '../types';
-import { logActivityEvent } from '../utils/storage';
 
 interface HistoryViewProps {
   taskHistory: StudyTask[];

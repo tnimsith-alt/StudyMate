@@ -183,12 +183,24 @@ export const TodayTasks: React.FC<TodayTasksProps> = ({
       {/* Tasks List */}
       <div className="space-y-2.5">
         {filteredTasks.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 dark:text-slate-500 text-sm">
-            {filter === 'completed'
-              ? 'No tasks completed yet today. Start your first session!'
-              : filter === 'pending'
-              ? 'All tasks completed! Great work for today.'
-              : 'No study tasks added yet. Add your plan above!'}
+          <div className="p-10 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/50 dark:bg-slate-900/40 space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
+              {filter === 'completed'
+                ? 'No tasks completed yet today'
+                : filter === 'pending'
+                ? 'All pending tasks completed!'
+                : 'No study targets added yet'}
+            </p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
+              {filter === 'completed'
+                ? 'Check off tasks above as you complete your daily study milestones.'
+                : filter === 'pending'
+                ? 'Great work! You have finished all your scheduled study targets for today.'
+                : 'Enter your study tasks above to plan and track your daily preparation.'}
+            </p>
           </div>
         ) : (
           filteredTasks.map(task => {
