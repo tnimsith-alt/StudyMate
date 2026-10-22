@@ -169,7 +169,7 @@ export function SlideBarDrawer({
       {/* Backdrop */}
       <div 
         onClick={onClose}
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300 animate-fade-in"
       />
 
       {/* Slide-out Drawer */}

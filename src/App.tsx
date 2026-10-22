@@ -99,6 +99,7 @@ export default function App() {
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState<boolean>(false);
   const [savePillVisible, setSavePillVisible] = useState<boolean>(false);
+  const [tutorInitialQuestion, setTutorInitialQuestion] = useState<string>('');
 
   // View navigation helper (clean view switching with URL hash sync)
   const navigateToSection = useCallback((sectionId: string) => {
@@ -1117,6 +1118,11 @@ export default function App() {
                       navigateToSection('timer');
                     }}
                     onAskAIAboutSubject={(subjectName, subtopicTitle) => {
+                      setTutorInitialQuestion(
+                        subtopicTitle
+                          ? `Explain "${subtopicTitle}" in ${subjectName} with key formulas and A/L exam tips`
+                          : `Explain core syllabus concepts and exam tips for ${subjectName}`
+                      );
                       navigateToSection('tutor');
                     }}
                     onEditSubjectDetails={(subj) => {
@@ -1303,6 +1309,7 @@ export default function App() {
                 onClearSubjectExamResults={handleClearSubjectExamResults}
                 onBackToSyllabus={() => navigateToSection('syllabus')}
                 onAskAITutorAboutTopic={(subjectName, examNotes) => {
+                  setTutorInitialQuestion(`Explain and provide revision guidance for ${subjectName} exam topic: "${examNotes}"`);
                   navigateToSection('tutor');
                 }}
               />
@@ -1399,6 +1406,7 @@ export default function App() {
               <AITutor
                 subjects={subjects}
                 activeSubjectId={activeSubjectId}
+                initialQuestion={tutorInitialQuestion}
               />
             </div>
           </div>
