@@ -19,7 +19,9 @@ export const AITutor: React.FC<AITutorProps> = ({
   initialQuestion = ''
 }) => {
   const [language, setLanguage] = useState<'en' | 'si'>('en');
-  const [question, setQuestion] = useState(initialQuestion);
+  // Dynamic user input state captured from the textarea
+  const [userInput, setUserInput] = useState<string>(initialQuestion);
+  const [activeQuestionAnswered, setActiveQuestionAnswered] = useState<string>('');
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>(activeSubjectId || (subjects[0]?.id || ''));
   const [answer, setAnswer] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,7 +32,7 @@ export const AITutor: React.FC<AITutorProps> = ({
   // Sync external initialQuestion if passed from other views
   useEffect(() => {
     if (initialQuestion && initialQuestion.trim()) {
-      setQuestion(initialQuestion);
+      setUserInput(initialQuestion);
     }
   }, [initialQuestion]);
 
@@ -51,13 +53,18 @@ export const AITutor: React.FC<AITutorProps> = ({
   ];
 
   const handleAsk = async (promptOverride?: string) => {
-    const q = (promptOverride !== undefined ? promptOverride : question).trim();
+    // Capture dynamic value directly from state or explicit override
+    const q = (promptOverride !== undefined ? promptOverride : userInput).trim();
     if (!q || loading) return;
 
-    setLoading(true);
+    // 1. Instantly clear old response state so previous text is not shown
+    setAnswer('');
     setError(null);
+    setLoading(true);
+    setActiveQuestionAnswered(q);
+
     if (promptOverride) {
-      setQuestion(promptOverride);
+      setUserInput(promptOverride);
     }
 
     const subjectName = activeSubject?.name || 'A/L General';
@@ -68,6 +75,7 @@ export const AITutor: React.FC<AITutorProps> = ({
     // Loop through candidate endpoints to prevent any 404 errors
     for (const endpoint of endpointsToTry) {
       try {
+        console.log(`[AI Tutor] Sending question "${q}" to ${endpoint}`);
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 
@@ -75,6 +83,7 @@ export const AITutor: React.FC<AITutorProps> = ({
             'Accept': 'application/json'
           },
           body: JSON.stringify({
+            // Dynamic value from userInput state directly passed into API payload
             question: q,
             language,
             subject: subjectName
@@ -95,7 +104,7 @@ export const AITutor: React.FC<AITutorProps> = ({
 
         const data = await response.json();
         if (data && typeof data.text === 'string' && data.text.trim()) {
-          receivedText = data.text;
+          receivedText = data.text.trim();
           break;
         }
       } catch (endpointErr) {
@@ -104,13 +113,13 @@ export const AITutor: React.FC<AITutorProps> = ({
       }
     }
 
-    // Client-side fallback guarantee: if all network endpoints fail or 404,
-    // generate an instant curriculum response so user's query succeeds every single time!
+    // Client-side fallback guarantee if offline or network unavailable
     if (!receivedText) {
       console.warn('[AI Tutor] Network request unavailable; using instant curriculum knowledge engine fallback.');
       receivedText = generateCurriculumResponse(q, subjectName, language);
     }
 
+    // 2. Accurately overwrite the previous response state variable and force UI re-render
     setAnswer(receivedText);
     setResponseTimestamp(Date.now());
     setLoading(false);
@@ -223,9 +232,10 @@ export const AITutor: React.FC<AITutorProps> = ({
         <div className="relative">
           <textarea
             id="tutor-question-input"
+            name="userInput"
             rows={3}
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -255,7 +265,8 @@ export const AITutor: React.FC<AITutorProps> = ({
                 type="button"
                 onClick={() => {
                   setAnswer('');
-                  setQuestion('');
+                  setUserInput('');
+                  setActiveQuestionAnswered('');
                 }}
                 className="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
               >
@@ -266,7 +277,7 @@ export const AITutor: React.FC<AITutorProps> = ({
             <button
               id="tutor-ask-btn"
               type="submit"
-              disabled={loading || !question.trim()}
+              disabled={loading || !userInput.trim()}
               className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl flex items-center gap-2 shadow-xs transition-all disabled:opacity-50 cursor-pointer active:scale-95"
             >
               {loading ? (
@@ -332,7 +343,7 @@ export const AITutor: React.FC<AITutorProps> = ({
           id="tutor-answer-box"
           className="animate-fade-in-up mt-5 p-5 sm:p-6 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xs"
         >
-          <div className="flex items-center justify-between pb-3.5 mb-3.5 border-b border-slate-200/60 dark:border-slate-700/60">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200/60 dark:border-slate-700/60">
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
@@ -363,6 +374,18 @@ export const AITutor: React.FC<AITutorProps> = ({
             </button>
           </div>
 
+          {/* Explicit display of the dynamic query answered */}
+          {activeQuestionAnswered && (
+            <div className="mb-3.5 p-2.5 rounded-xl bg-white/60 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 flex items-start gap-2 text-xs">
+              <span className="font-bold text-indigo-600 dark:text-indigo-400 shrink-0">
+                {language === 'si' ? 'විමසුම:' : 'Query:'}
+              </span>
+              <span className="text-slate-700 dark:text-slate-300 font-medium italic">
+                "{activeQuestionAnswered}"
+              </span>
+            </div>
+          )}
+
           <div className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed whitespace-pre-wrap font-sans">
             {answer}
           </div>
@@ -374,14 +397,14 @@ export const AITutor: React.FC<AITutorProps> = ({
             </span>
             <button
               type="button"
-              onClick={() => handleAsk(`Give 2 Sri Lankan A/L past paper style questions on "${question}" with marking breakdown`)}
+              onClick={() => handleAsk(`Give 2 Sri Lankan A/L past paper style questions on "${activeQuestionAnswered || userInput}" with marking breakdown`)}
               className="text-[11px] px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 transition-colors cursor-pointer"
             >
               📝 Past paper questions
             </button>
             <button
               type="button"
-              onClick={() => handleAsk(`Provide step-by-step formula derivations and SI units for "${question}"`)}
+              onClick={() => handleAsk(`Provide step-by-step formula derivations and SI units for "${activeQuestionAnswered || userInput}"`)}
               className="text-[11px] px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 transition-colors cursor-pointer"
             >
               📐 Formulas & SI Units
@@ -391,7 +414,7 @@ export const AITutor: React.FC<AITutorProps> = ({
               onClick={() => {
                 const nextLang = language === 'en' ? 'si' : 'en';
                 setLanguage(nextLang);
-                handleAsk(question);
+                handleAsk(activeQuestionAnswered || userInput);
               }}
               className="text-[11px] px-2.5 py-1 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400 hover:text-indigo-600 transition-colors cursor-pointer"
             >

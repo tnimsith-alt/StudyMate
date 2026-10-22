@@ -48,47 +48,58 @@ function apiPlugin(): Plugin {
             let answer: string | undefined;
 
             if (apiKey) {
-              try {
-                const ai = new GoogleGenAI({
-                  apiKey,
-                  httpOptions: {
-                    headers: { 'User-Agent': 'aistudio-build' },
-                  },
-                });
+              const modelsToTry = ['gemini-flash-latest', 'gemini-3.8-flash', 'gemini-3.1-flash-lite', 'gemini-2.5-flash'];
+              const ai = new GoogleGenAI({
+                apiKey,
+                httpOptions: {
+                  headers: { 'User-Agent': 'aistudio-build' },
+                },
+              });
 
-                // Primary active model: gemini-2.5-flash
-                const response = await ai.models.generateContent({
-                  model: 'gemini-2.5-flash',
-                  contents: `Subject context: ${studentSubject}\nStudent Question: ${cleanQuestion}`,
-                  config: { systemInstruction },
-                });
+              const dynamicPrompt = `Subject: ${studentSubject}\nStudent Question: ${cleanQuestion}`;
 
-                if (response?.text) {
-                  answer = response.text;
-                }
-              } catch (sdkErr) {
-                console.error('[Vite Middleware SDK Error with gemini-2.5-flash]:', sdkErr);
-
-                // Direct REST fallback
+              for (const modelName of modelsToTry) {
                 try {
-                  const restUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-                  const restRes = await fetch(restUrl, {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'User-Agent': 'aistudio-build'
-                    },
-                    body: JSON.stringify({
-                      contents: [{ role: 'user', parts: [{ text: `Subject: ${studentSubject}\nQuestion: ${cleanQuestion}` }] }],
-                      systemInstruction: { parts: [{ text: systemInstruction }] }
-                    })
+                  const response = await ai.models.generateContent({
+                    model: modelName,
+                    contents: dynamicPrompt,
+                    config: { systemInstruction },
                   });
-                  if (restRes.ok) {
-                    const restData: any = await restRes.json();
-                    answer = restData?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                  if (response?.text && response.text.trim()) {
+                    answer = response.text.trim();
+                    console.log(`[Vite AI Tutor] Success with model "${modelName}"!`);
+                    break;
                   }
-                } catch (restErr) {
-                  console.error('[Vite Middleware REST Error]:', restErr);
+                } catch (sdkErr: any) {
+                  console.warn(`[Vite AI Tutor SDK] Model "${modelName}" failed:`, sdkErr?.status || sdkErr?.message || sdkErr);
+
+                  // Direct REST fallback
+                  try {
+                    const restUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+                    const restRes = await fetch(restUrl, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'aistudio-build'
+                      },
+                      body: JSON.stringify({
+                        contents: [{ role: 'user', parts: [{ text: dynamicPrompt }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
+                      })
+                    });
+                    if (restRes.ok) {
+                      const restData: any = await restRes.json();
+                      const textResult = restData?.candidates?.[0]?.content?.parts?.[0]?.text;
+                      if (textResult && textResult.trim()) {
+                        answer = textResult.trim();
+                        console.log(`[Vite AI Tutor REST] Success with model "${modelName}"!`);
+                        break;
+                      }
+                    }
+                  } catch (restErr) {
+                    console.warn(`[Vite AI Tutor REST] Error on "${modelName}":`, restErr);
+                  }
                 }
               }
             }

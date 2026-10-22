@@ -44,62 +44,72 @@ async function startServer() {
       let answer: string | undefined;
 
       if (apiKey) {
-        // 1. Try with GoogleGenAI SDK using active production model 'gemini-2.5-flash'
-        try {
-          const ai = new GoogleGenAI({
-            apiKey,
-            httpOptions: {
-              headers: { 'User-Agent': 'aistudio-build' }
-            }
-          });
-
-          // Primary model: gemini-2.5-flash
-          const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: `Subject context: ${studentSubject}\nStudent Question: ${cleanQuestion}`,
-            config: { systemInstruction }
-          });
-
-          if (response?.text) {
-            answer = response.text;
+        // Multi-model Gemini pool to guarantee active model generation without hardcoded fallbacks
+        const modelsToTry = ['gemini-flash-latest', 'gemini-3.8-flash', 'gemini-3.1-flash-lite', 'gemini-2.5-flash'];
+        const ai = new GoogleGenAI({
+          apiKey,
+          httpOptions: {
+            headers: { 'User-Agent': 'aistudio-build' }
           }
-        } catch (sdkErr) {
-          console.error('[AI Tutor SDK Error with gemini-2.5-flash]:', sdkErr);
+        });
 
-          // 2. Direct REST fallback to v1beta/models/gemini-2.5-flash if SDK encounters issue
+        const dynamicPrompt = `Subject: ${studentSubject}\nStudent Question: ${cleanQuestion}`;
+
+        for (const modelName of modelsToTry) {
+          // 1. Try with GoogleGenAI SDK
           try {
-            const restUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-            const restRes = await fetch(restUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'User-Agent': 'aistudio-build'
-              },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [{ text: `Subject: ${studentSubject}\nQuestion: ${cleanQuestion}` }]
-                  }
-                ],
-                systemInstruction: {
-                  parts: [{ text: systemInstruction }]
-                }
-              })
+            console.log(`[AI Tutor] Querying Gemini model "${modelName}" with question: "${cleanQuestion.substring(0, 60)}..."`);
+            const response = await ai.models.generateContent({
+              model: modelName,
+              contents: dynamicPrompt,
+              config: { systemInstruction }
             });
 
-            if (restRes.ok) {
-              const restData: any = await restRes.json();
-              const textResult = restData?.candidates?.[0]?.content?.parts?.[0]?.text;
-              if (textResult) {
-                answer = textResult;
-              }
-            } else {
-              const restErrText = await restRes.text();
-              console.error('[AI Tutor REST Error]:', restRes.status, restErrText);
+            if (response?.text && response.text.trim()) {
+              answer = response.text.trim();
+              console.log(`[AI Tutor] Success with model "${modelName}"! Generated ${answer.length} chars.`);
+              break;
             }
-          } catch (restErr) {
-            console.error('[AI Tutor REST Fetch Error]:', restErr);
+          } catch (sdkErr: any) {
+            console.warn(`[AI Tutor SDK] Model "${modelName}" failed:`, sdkErr?.status || sdkErr?.message || sdkErr);
+
+            // 2. Direct REST fallback for this model
+            try {
+              const restUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+              const restRes = await fetch(restUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'User-Agent': 'aistudio-build'
+                },
+                body: JSON.stringify({
+                  contents: [
+                    {
+                      role: 'user',
+                      parts: [{ text: dynamicPrompt }]
+                    }
+                  ],
+                  systemInstruction: {
+                    parts: [{ text: systemInstruction }]
+                  }
+                })
+              });
+
+              if (restRes.ok) {
+                const restData: any = await restRes.json();
+                const textResult = restData?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (textResult && textResult.trim()) {
+                  answer = textResult.trim();
+                  console.log(`[AI Tutor REST] Success with model "${modelName}"!`);
+                  break;
+                }
+              } else {
+                const errText = await restRes.text();
+                console.warn(`[AI Tutor REST] Model "${modelName}" HTTP ${restRes.status}:`, errText.substring(0, 100));
+              }
+            } catch (restErr) {
+              console.warn(`[AI Tutor REST] Error on "${modelName}":`, restErr);
+            }
           }
         }
       }

@@ -289,6 +289,138 @@ $$f' = f \\left( \\frac{v \\pm v_0}{v \\mp v_s} \\right)$$
 #### 💡 විභාග ලකුණු ලබා ගැනීමේ උපක්‍රමය:
 • ප්‍රභවය හා නිරීක්ෂකයා **ලං වන විට** ඇසෙන සංඛ්‍යාතය වැඩි විය යුතුයි ($f' > f$). (හරය අඩු විය යුතුය: $v - v_s$).
 • ප්‍රභවය හා නිරීක්ෂකයා **ඈත් වන විට** ඇසෙන සංඛ්‍යාතය අඩු විය යුතුයි ($f' < f$).`
+  },
+
+  // 6. Photoelectric Effect (Physics Modern Physics)
+  {
+    subject: 'Physics',
+    topic: 'photoelectric',
+    en: `### ⚡ The Photoelectric Effect (A/L Modern Physics)
+
+#### 1. Core Principles & Einstein's Equation:
+When electromagnetic radiation of sufficient frequency strikes a metal surface, electrons (photoelectrons) are instantaneously emitted.
+$$\\mathbf{E = hf = \\Phi + E_{k,\\max}}$$
+$$hf = hf_0 + \\frac{1}{2} m v_{\\max}^2 = \\Phi + e V_s$$
+
+Where:
+• $h$ = Planck's constant ($6.63 \\times 10^{-34} \\, \\text{J}\\cdot\\text{s}$)
+• $f$ = Incident light frequency
+• $\\Phi = hf_0$ = Work function of metal surface (minimum energy needed to liberate electron)
+• $f_0$ = Threshold frequency ($\\lambda_0 = c/f_0$ is threshold wavelength)
+• $E_{k,\\max} = e V_s$ = Maximum kinetic energy of emitted photoelectrons
+• $V_s$ = Stopping potential (විභව නැවතීම)
+
+---
+
+#### 2. Experimental Laws & Key Observations:
+1. **Intensity Effect:** Increasing light intensity increases the rate of emitted photoelectrons ($I_{photo} \\propto \\text{Intensity}$), but does **NOT** change their maximum kinetic energy or stopping potential $V_s$.
+2. **Frequency Effect:** Increasing frequency increases $E_{k,\\max}$ linearly ($V_s = \\frac{h}{e}f - \\frac{\\Phi}{e}$). Slope of $V_s$ vs $f$ graph is always $\\frac{h}{e}$ (universal constant).
+3. **Instantaneous Emission:** Emission occurs with no measurable time lag ($< 10^{-9} \\, \\text{s}$), refuting classical wave theory.
+
+---
+
+#### 💡 Sri Lankan A/L Exam Tips:
+• The slope of the $V_s$ vs $f$ graph is **independent of the metal** and equals $\\frac{h}{e}$. The intercept on the frequency axis is the threshold frequency $f_0$.
+• Work function $\\Phi$ is often given in electron-volts ($\\text{eV}$). Always convert to Joules: $1 \\, \\text{eV} = 1.6 \\times 10^{-19} \\, \\text{J}$.`,
+    si: `### ⚡ ප්‍රකාශ විද්‍යුත් ආචරණය (A/L භෞතික විද්‍යාව - නූතන භෞතික විද්‍යාව)
+
+#### 1. මූලික මූලධර්මය සහ අයින්ස්ටයින්ගේ සමීකරණය:
+ප්‍රමාණවත් සංඛ්‍යාතයක් සහිත විද්‍යුත් චුම්භක විකිරණ ලෝහ පෘෂ්ඨයක් මත පතිත වන විට, ඉලෙක්ට්‍රෝන (ප්‍රකාශ ඉලෙක්ට්‍රෝන) ක්ෂණිකව විමෝචනය වේ.
+$$\\mathbf{hf = \\Phi + E_{k,\\max}}$$
+$$hf = hf_0 + e V_s$$
+
+මෙහි:
+• $h$ = ප්ලාන්ක් නියතය ($6.63 \\times 10^{-34} \\, \\text{J}\\cdot\\text{s}$)
+• $\\Phi = hf_0$ = ලෝහයේ කාර්ය ශ්‍රිතය (ඉලෙක්ට්‍රෝනයක් නිදහස් කිරීමට අවශ්‍ය අවම ශක්තිය)
+• $f_0$ = සීමාකාරී සංඛ්‍යාතය
+• $V_s$ = නැවතුම් විභවය (Stopping Potential)
+
+---
+
+#### 2. A/L විභාග නිරීක්ෂණ:
+• **තීව්‍රතාව (Intensity):** වැඩි කරන විට ප්‍රකාශ විද්‍යුත් ධාරාව වැඩි වේ; එහෙත් නැවතුම් විභවය $V_s$ හෝ උපරිම චාලක ශක්තිය වෙනස් **නොවේ**.
+• **සංඛ්‍යාතය (Frequency):** වැඩි කරන විට උපරිම චාලක ශක්තිය සහ $V_s$ රේඛීයව වැඩි වේ ($V_s$ එදිරිව $f$ ප්‍රස්ථාරයේ අනුක්‍රමණය $\\frac{h}{e}$ කි).
+
+---
+
+#### 💡 A/L විභාග උපදෙස්:
+• කාර්ය ශ්‍රිතය $\\text{eV}$ වලින් ලබා දී ඇත්නම්, $1 \\, \\text{eV} = 1.6 \\times 10^{-19} \\, \\text{J}$ මඟින් ජූල් ($\\text{J}$) බවට පරිවර්තනය කරන්න.`
+  },
+
+  // 7. Electromagnetic Induction & Faraday's Law (Physics)
+  {
+    subject: 'Physics',
+    topic: 'induction',
+    en: `### 🧲 Electromagnetic Induction & Faraday's Law (A/L Physics)
+
+#### 1. Fundamental Laws:
+• **Faraday's Law:** The magnitude of induced electromotive force (EMF) is directly proportional to the time rate of change of magnetic flux linkage:
+$$\\mathbf{\\mathcal{E} = -N \\frac{d\\Phi}{dt}}$$
+Where $\\Phi = \\vec{B} \\cdot \\vec{A} = BA \\cos\\theta$ is magnetic flux ($1 \\, \\text{Weber} = 1 \\, \\text{T}\\cdot\\text{m}^2$).
+
+• **Lenz’s Law (Conservation of Energy):** The direction of the induced EMF (and current) is always such that it opposes the change in magnetic flux that produces it (denoted by the negative sign in $\\mathcal{E} = -N \\frac{d\\Phi}{dt}$).
+
+---
+
+#### 2. Motional EMF in a Conductor:
+A straight rod of length $L$ moving with velocity $v$ perpendicular to uniform magnetic field $B$:
+$$\\mathbf{\\mathcal{E} = B v L}$$
+Direction of induced current determined by **Fleming's Right-Hand Rule** (Dynamo Rule).
+
+---
+
+#### 💡 Sri Lankan A/L Exam Tips:
+• State Lenz's Law precisely: "The induced current flows in such a direction that its magnetic effect opposes the change producing it."
+• In self-induction questions, use $\\mathcal{E} = -L \\frac{dI}{dt}$ and energy stored in an inductor $U = \\frac{1}{2} L I^2$.`,
+    si: `### 🧲 විද්‍යුත් චුම්භක ප්‍රේරණය සහ ෆැරඩේ නියමය (A/L භෞතික විද්‍යාව)
+
+#### 1. මූලික නියම:
+• **ෆැරඩේ නියමය:** පරිපථයක ප්‍රේරණය වන විද්‍යුත් ගාමක බලයේ (වි.ගා.බ.) විශාලත්වය, චුම්භක ස්‍රාව බන්ධනය වෙනස් වීමේ සීඝ්‍රතාවයට අනුලෝමව සමානුපාතික වේ:
+$$\\mathbf{\\mathcal{E} = -N \\frac{d\\Phi}{dt}}$$
+• **ලෙන්ස්ගේ නියමය:** ප්‍රේරිත ධාරාවේ දිශාව වන්නේ එය ඇතිවීමට හේතු වූ චුම්භක ස්‍රාව වෙනස්වීමට ප්‍රතිවිරුද්ධ වන දිශාවයි.
+
+• **චලිත වි.ගා.බ.:** $B$ ක්ෂේත්‍රයක $v$ ප්‍රවේගයෙන් චලනය වන $L$ දිග සන්නායකයක:
+$$\\mathbf{\\mathcal{E} = BvL}$$
+
+---
+
+#### 💡 A/L විභාග උපදෙස්:
+• ප්‍රේරිත ධාරාවේ දිශාව සෙවීමට **ෆ්ලෙමින්ගේ දකුණත් නියමය** භාවිත කරන්න.`
+  },
+
+  // 8. Ohm's Law & Kirchhoff's Rules (Physics Current Electricity)
+  {
+    subject: 'Physics',
+    topic: 'kirchhoff',
+    en: `### ⚡ Current Electricity: Ohm's Law & Kirchhoff's Rules
+
+#### 1. Core Principles:
+• **Ohm's Law:** At constant physical conditions (especially temperature), current flowing through a conductor is directly proportional to the potential difference across it:
+$$\\mathbf{V = IR}$$
+• **Resistance & Resistivity:** $R = \\rho \\frac{L}{A}$ where $\\rho$ is resistivity ($\\Omega\\cdot\\text{m}$).
+
+---
+
+#### 2. Kirchhoff's Laws:
+1. **Kirchhoff's Current Law (KCL - First Rule):** The algebraic sum of currents entering any node/junction is zero (Based on **Conservation of Charge**):
+$$\\sum I_{\\text{in}} = \\sum I_{\\text{out}}$$
+2. **Kirchhoff's Voltage Law (KVL - Second Rule):** In any closed loop, the algebraic sum of EMFs equals the algebraic sum of potential drops (Based on **Conservation of Energy**):
+$$\\sum \\mathcal{E} = \\sum IR$$
+
+---
+
+#### 💡 Sri Lankan A/L Exam Tips:
+• In Potentiometer (විභවමානය) questions: No current drawn at balance point $\\implies$ measures true internal EMF with zero error.
+• State the underlying conservation principles (KCL $\\rightarrow$ Charge conservation, KVL $\\rightarrow$ Energy conservation) — tested frequently in A/L MCQ & structured papers.`,
+    si: `### ⚡ ධාරා විද්‍යුතය: ඕම්ගේ නියමය සහ කර්චොෆ්ගේ නියම
+
+#### 1. මූලික නියම:
+• **ඕම්ගේ නියමය:** උෂ්ණත්වය ඇතුළු භෞතික තත්ත්ව නියතව පවතින විට, සන්නායකයක් තුළින් ගලන ධාරාව එහි අග්‍ර අතර විභව අන්තරයට අනුලෝමව සමානුපාතික වේ ($V = IR$).
+• **ප්‍රතිරෝධකතාව:** $R = \\rho \\frac{L}{A}$
+
+#### 2. කර්චොෆ්ගේ නියම:
+1. **පළමු නියමය (සන්ධි නියමය - ආරෝපණ සංස්ථිතිය):** ඕනෑම සන්ධියකට ඇතුළු වන ධාරාවන්ගේ ඓක්‍යය, ඉන් පිටවන ධාරාවන්ගේ ඓක්‍යයට සමාන වේ ($\\sum I = 0$).
+2. **දෙවන නියමය (ලූප නියමය - ශක්ති සංස්ථිතිය):** ඕනෑම සංවෘත ලූපයක විද්‍යුත් ගාමක බලයන්ගේ වීජීය ඓක්‍යය, එහි ප්‍රතිරෝධ මත විභව බැස්මවල වීජීය ඓක්‍යයට සමාන වේ ($\\sum \\mathcal{E} = \\sum IR$).`
   }
 ];
 
@@ -308,65 +440,68 @@ export function generateCurriculumResponse(
     if (
       qLower.includes(item.topic) ||
       (item.topic === 'newton' && (qLower.includes('force') || qLower.includes('f=ma') || qLower.includes('inertia') || qLower.includes('නියම') || qLower.includes('නිව්ටන්'))) ||
-      (item.topic === 'integration' && (qLower.includes('parts') || qLower.includes('integral') || qLower.includes('අනුකලන'))) ||
-      (item.topic === 'sn1' && (qLower.includes('sn2') || qLower.includes('substitution') || qLower.includes('කාබනික') || qLower.includes('ප්‍රතික්‍රියා'))) ||
+      (item.topic === 'integration' && (qLower.includes('parts') || qLower.includes('integral') || qLower.includes('calculus') || qLower.includes('අනුකලන'))) ||
+      (item.topic === 'sn1' && (qLower.includes('sn2') || qLower.includes('substitution') || qLower.includes('organic') || qLower.includes('කාබනික') || qLower.includes('ප්‍රතික්‍රියා'))) ||
       (item.topic === 'wave' && (qLower.includes('transverse') || qLower.includes('longitudinal') || qLower.includes('තරංග'))) ||
-      (item.topic === 'doppler' && (qLower.includes('sound') || qLower.includes('frequency') || qLower.includes('ඩොප්ලර්')))
+      (item.topic === 'doppler' && (qLower.includes('sound') || qLower.includes('frequency') || qLower.includes('ඩොප්ලර්'))) ||
+      (item.topic === 'photoelectric' && (qLower.includes('photo') || qLower.includes('electron') || qLower.includes('photon') || qLower.includes('ප්‍රකාශ'))) ||
+      (item.topic === 'induction' && (qLower.includes('induction') || qLower.includes('faraday') || qLower.includes('lenz') || qLower.includes('ප්‍රේරණ'))) ||
+      (item.topic === 'kirchhoff' && (qLower.includes('ohm') || qLower.includes('kirchhoff') || qLower.includes('circuit') || qLower.includes('voltage') || qLower.includes('current') || qLower.includes('කර්චොෆ්')))
     ) {
       return language === 'si' ? item.si : item.en;
     }
   }
 
-  // Fallback high-yield dynamic academic tutor response
+  // Extract core keywords from student question for dynamic, customized synthesis
+  const cleanQ = question.trim();
+  const keywords = cleanQ
+    .replace(/[?.,!/\\()"-]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !['what', 'explain', 'tell', 'about', 'difference', 'between', 'give', 'with', 'example', 'step', 'steps', 'this', 'that', 'from', 'your', 'please'].includes(w.toLowerCase()));
+  const focusTopic = keywords.slice(0, 3).join(' ') || cleanQ;
+
+  // Dynamically constructed academic guidance specific to the student's question keywords
   if (language === 'si') {
-    return `### 📚 A/L විෂය උපදේශය & සංකල්ප විවරණය (${subject || 'A/L සාමාන්‍ය'})
+    return `### 📚 A/L විෂය විග්‍රහය: "${cleanQ}" (${subject || 'A/L සාමාන්‍ය'})
 
-**ඔබගේ විමසුම:** "${question.trim()}"
-
----
-
-#### 1. මූලික සංකල්ප සහ විග්‍රහය:
-• මෙම මාතෘකාව ශ්‍රී ලංකා උසස් පෙළ විෂය නිර්දේශයේ ප්‍රධාන නිපුණතාවකි.
-• ගැටළුව විසඳීමට පෙර මූලික අර්ථ දැක්වීම් (Definitions) සහ භෞතික හෝ රසායනික මූලධර්ම නිවැරදිව සිහිපත් කරගන්න.
-• සංකේත සහ සම්මත SI ඒකක ($m, kg, s, N, J, W, mol$) කෙරෙහි විශේෂ අවධානයක් යොමු කරන්න.
+#### 1. මූලික සංකල්පීය විග්‍රහය (${focusTopic}):
+• මෙම ප්‍රශ්නය ශ්‍රී ලංකා උසස් පෙළ විෂය නිර්දේශයේ ප්‍රධාන විභාග නිපුණතාවක් ආවරණය කරයි.
+• **මූලධර්මය:** අදාළ විෂය ක්ෂේත්‍රයේ නිවැරදි සම්මත අර්ථ දැක්වීම (Definition) සහ පද්ධතිය පාලනය කරන භෞතික/රසායනික/ගණිතමය නියමය ප්‍රථමයෙන් පැහැදිලිව හඳුනාගන්න.
+• **ඒකක සහ සංකේත:** SI සම්මත ඒකක කෙරෙහි විභාග ලකුණු සම්මුතියේ දැඩි අවධානයක් යොමු කෙරේ.
 
 ---
 
-#### 2. විභාග ප්‍රශ්න පත්‍ර සඳහා පියවරෙන් පියවර විසඳුම් ක්‍රමවේදය:
-1. **දත්ත හඳුනාගැනීම:** ප්‍රශ්නයේ ලබා දී ඇති අගයන් සහ සෙවිය යුතු විචල්‍යයන් ලියාගන්න.
-2. **සම්බන්ධතා සමීකරණ තෝරාගැනීම:** අදාළ විෂය ක්ෂේත්‍රයේ නිවැරදි සූත්‍රය තෝරාගෙන ආදේශයට පෙර විචල්‍යයන් පෙළගස්වන්න.
-3. **වීජීය සුළු කිරීම්:** පියවර මඟ නොහැර ලියා දක්වන්න (A/L ලකුණු සම්මුතියේ එක් එක් පියවරට ලකුණු වෙන් වේ).
-4. **අවසාන පිළිතුර:** නිවැරදි සංඛ්‍යාත්මක අගය සමඟ නිවැරදි ඒකකය අනිවාර්යයෙන්ම සඳහන් කරන්න.
+#### 2. පියවරෙන් පියවර විභාග ගැටළු විසඳීමේ ක්‍රමවේදය:
+1. **දත්ත සටහන් කර ගැනීම:** ප්‍රශ්නයේ දී ඇති දත්ත සහ සෙවිය යුතු අගය පැහැදිලි සංකේත සහිතව ලියන්න.
+2. **සම්බන්ධතා සමීකරණය තේරීම:** අදාළ ක්ෂේත්‍රයේ නිවැරදි සූත්‍රය තෝරා සංකේතමය ආකාරයෙන් මුලින් ලියා දක්වන්න.
+3. **පියවරෙන් පියවර සුළු කිරීම:** අතරමැදි ගණනය කිරීම් සහ වීජීය පියවර පැහැදිලිව ලියන්න (පියවර ලකුණු ලබා ගැනීමට).
+4. **අවසාන නිගමනය:** සුදුසු සාධක සංඛ්‍යාවකට සහ නියමිත ඒකකය සහිතව පිළිතුර දක්වන්න.
 
 ---
 
-#### 💡 ශ්‍රී ලංකා A/L විභාග ලකුණු ලබා ගැනීමේ උපක්‍රම (Marking Scheme Tips):
-• පසුගිය වසර 10 ක විභාග ප්‍රශ්න පත්‍ර (Past Papers) සහ ඒවායේ ලකුණු දීමේ පටිපාටි (Marking Schemes) හොඳින් අධ්‍යයනය කරන්න.
-• ව්‍යුහගත රචනා ප්‍රශ්නවලදී කෙටි, පැහැදිලි හා තාක්ෂණික වචන භාවිත කර පිළිතුරු සපයන්න.`;
+#### 💡 ශ්‍රී ලංකා A/L විභාග උපක්‍රම (Marking Scheme Tips):
+• ව්‍යුහගත රචනා ප්‍රශ්නවලදී කෙටි, තාක්ෂණික සහ විෂය නිර්දේශයට ගැළපෙන නිවැරදි පාරිභාෂික වචන (Terminology) යොදාගන්න.
+• පසුගිය වසරවල A/L ලකුණු දීමේ පටිපාටි (Marking Schemes) හොඳින් පරිශීලනය කරන්න.`;
   }
 
-  return `### 📚 A/L Subject Breakdown & Tutorial Guide (${subject || 'A/L General'})
+  return `### 📚 A/L Academic Guide: "${cleanQ}" (${subject || 'A/L General'})
 
-**Student Query:** "${question.trim()}"
-
----
-
-#### 1. Conceptual Framework & Definitions:
-• This topic is a core component of the Sri Lankan G.C.E. Advanced Level curriculum.
-• Begin by identifying the fundamental scientific laws, mathematical theorems, or reaction pathways that govern the system.
-• Always verify consistency in SI base units (meters, kilograms, seconds, Newtons, Joules, Joules per Kelvin, etc.) before performing calculations.
+#### 1. Core Principles & Concept Overview (${focusTopic}):
+• This query relates directly to key competencies in the Sri Lankan G.C.E. Advanced Level syllabus.
+• **Theoretical Framework:** Begin by defining the core principle governing this topic and articulating standard scientific assumptions or boundary conditions.
+• **SI Units & Dimensions:** Ensure all quantities are expressed in base SI units before performing multi-step calculations.
 
 ---
 
-#### 2. Systematic Problem Solving Methodology:
-1. **Extract Given Parameters:** Write down all known quantities with their correct units and signs.
-2. **Select Governing Equations:** State the relevant formula in standard symbolic form before substituting numbers.
-3. **Step-by-Step Derivation:** Carry through all algebraic manipulations clearly so method marks are secured.
-4. **Final Result:** State the final numerical answer to appropriate significant figures alongside proper physical units.
+#### 2. Systematic Problem-Solving Strategy:
+1. **Parameter Identification:** Tabulate all given variables with their proper signs and units.
+2. **State Governing Formula:** Write down standard equations symbolically before numerical substitution to secure formula method marks.
+3. **Worked Steps:** Show logical algebraic and arithmetic transitions step-by-step.
+4. **Final Result:** Report final answer to appropriate significant figures with correct physical units.
 
 ---
 
-#### 💡 Sri Lankan A/L Exam Tips & Marking Scheme Strategy:
-• In structured essay questions, clearly label diagrams, vector directions, and boundary conditions.
-• Practice recent past papers under timed conditions (1.8 minutes per mark) to build speed and accuracy.`;
+#### 💡 Sri Lankan A/L Exam & Marking Scheme Advice:
+• In Structured Essay and Essay answers, use precise terms from the NIE Resource Book.
+• For calculation questions, clearly indicate vector directions and coordinate conventions.`;
 }
