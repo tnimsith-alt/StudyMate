@@ -2,7 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Dynamic Theme Accent Variables (managed via CSS variables and localStorage) */
+/* Dynamic Theme Accent & Background Variables (managed via CSS variables and localStorage) */
 :root {
   --primary: #2563eb;
   --primary-rgb: 37, 99, 235;
@@ -13,12 +13,25 @@
   --primary-light-border: rgba(37, 99, 235, 0.28);
   --primary-glow: rgba(37, 99, 235, 0.35);
   --primary-contrast: #ffffff;
+  --bg-canvas: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --border-surface: rgba(0, 0, 0, 0.08);
 }
 
 .dark {
   --primary-light: rgba(37, 99, 235, 0.18);
   --primary-light-border: rgba(37, 99, 235, 0.35);
   --primary-glow: rgba(37, 99, 235, 0.45);
+  --bg-canvas: #020617;
+  --bg-surface: #0f172a;
+  --bg-surface-elevated: #1e293b;
+  --border-surface: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  background-color: var(--bg-canvas);
+  min-height: 100vh;
 }
 
 /* Dynamic Theme Accent Utilities */

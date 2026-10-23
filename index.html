@@ -48,6 +48,21 @@
             var yiq = (r * 299 + g * 587 + b * 114) / 1000;
             root.style.setProperty('--primary-contrast', yiq >= 150 ? '#0f172a' : '#ffffff');
           }
+
+          // Initialize custom background canvas
+          var savedBg = localStorage.getItem('studymate_theme_bg');
+          if (savedBg && /^#[0-9A-Fa-f]{6}$/.test(savedBg)) {
+            var root = document.documentElement;
+            root.style.setProperty('--bg-canvas', savedBg);
+            var bc = savedBg.substring(1);
+            var br = parseInt(bc.substring(0, 2), 16);
+            var bg = parseInt(bc.substring(2, 4), 16);
+            var bb = parseInt(bc.substring(4, 6), 16);
+            var byiq = (br * 299 + bg * 587 + bb * 114) / 1000;
+            if (byiq < 140) {
+              root.classList.add('dark');
+            }
+          }
         } catch (e) {}
       })();
     </script>

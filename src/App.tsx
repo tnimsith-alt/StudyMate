@@ -22,7 +22,7 @@ import {
 } from './utils/storage';
 import { ThemeToggle } from './components/ThemeToggle';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
-import { applyThemeColor, getSavedThemeColor } from './utils/theme';
+import { applyThemeColor, getSavedThemeColor, applyBackgroundColor, getSavedBackgroundColor } from './utils/theme';
 import { SubjectTabs } from './components/SubjectTabs';
 import { SubjectView } from './components/SubjectView';
 import { StudyTimer } from './components/StudyTimer';
@@ -65,6 +65,7 @@ export default function App() {
   });
 
   const [themeColor, setThemeColor] = useState<string>(() => getSavedThemeColor());
+  const [bgColor, setBgColor] = useState<string | null>(() => getSavedBackgroundColor());
   const [isThemeCustomizerOpen, setIsThemeCustomizerOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -82,6 +83,10 @@ export default function App() {
   useEffect(() => {
     applyThemeColor(themeColor, false);
   }, [themeColor]);
+
+  useEffect(() => {
+    applyBackgroundColor(bgColor, false);
+  }, [bgColor]);
 
   // Data states
   const [subjects, setSubjects] = useState<Subject[]>(() => loadStoredSubjects());
@@ -196,6 +201,10 @@ export default function App() {
           setThemeColor(e.newValue);
           applyThemeColor(e.newValue, false);
         }
+        if (e.key === 'studymate_theme_bg') {
+          setBgColor(e.newValue);
+          applyBackgroundColor(e.newValue, false);
+        }
       }
     };
 
@@ -205,13 +214,19 @@ export default function App() {
       }
     };
 
+    const handleCustomBgChange = (e: any) => {
+      setBgColor(e.detail?.hex || null);
+    };
+
     window.addEventListener('storage', handleStorageEvent);
     window.addEventListener('studymate_theme_change', handleCustomThemeChange);
+    window.addEventListener('studymate_bg_change', handleCustomBgChange);
 
     return () => {
       if (channel) channel.close();
       window.removeEventListener('storage', handleStorageEvent);
       window.removeEventListener('studymate_theme_change', handleCustomThemeChange);
+      window.removeEventListener('studymate_bg_change', handleCustomBgChange);
     };
   }, []);
 
@@ -673,10 +688,16 @@ export default function App() {
   const todayTasksCompleted = tasks.filter(t => t.done).length;
 
   return (
-    <div className={`min-h-screen w-full flex flex-col justify-between overflow-x-hidden ${darkMode ? 'dark ' : ''}bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200`}>
+    <div 
+      className={`min-h-screen w-full flex flex-col justify-between overflow-x-hidden ${darkMode ? 'dark ' : ''}text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200`}
+      style={{ backgroundColor: 'var(--bg-canvas)' }}
+    >
       
       {/* 1. STICKY TOP NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md transition-colors shadow-2xs shrink-0">
+      <header 
+        className="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md transition-colors shadow-2xs shrink-0"
+        style={{ backgroundColor: 'var(--bg-surface)' }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           
           {/* Brand Logo & Title */}
@@ -1582,6 +1603,11 @@ export default function App() {
         onThemeColorChange={(newHex) => {
           setThemeColor(newHex);
           broadcastSync('THEME_CHANGED');
+        }}
+        currentBgColor={bgColor}
+        onBgColorChange={(newBg) => {
+          setBgColor(newBg);
+          broadcastSync('BG_CHANGED');
         }}
       />
 

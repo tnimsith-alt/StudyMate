@@ -1,4 +1,4 @@
-// Theme Accent System for StudyMate LK
+// Theme Accent & Background Canvas System for StudyMate LK
 // Supports dynamic CSS variable injection, preset swatches, custom hex color picking, and persistent localStorage storage
 
 export interface ThemeColorPreset {
@@ -8,8 +8,17 @@ export interface ThemeColorPreset {
   description: string;
 }
 
+export interface BackgroundPreset {
+  id: string;
+  name: string;
+  hex: string;
+  isDark: boolean;
+  description: string;
+}
+
 export const DEFAULT_THEME_COLOR = '#2563eb'; // Classic Sapphire Blue
 export const THEME_STORAGE_KEY = 'studymate_theme_accent';
+export const THEME_BG_STORAGE_KEY = 'studymate_theme_bg';
 
 export const THEME_COLOR_PRESETS: ThemeColorPreset[] = [
   {
@@ -74,6 +83,79 @@ export const THEME_COLOR_PRESETS: ThemeColorPreset[] = [
   }
 ];
 
+export const THEME_BACKGROUND_PRESETS: BackgroundPreset[] = [
+  {
+    id: 'default-light',
+    name: 'Crisp Slate',
+    hex: '#f8fafc',
+    isDark: false,
+    description: 'Standard neutral light paper canvas'
+  },
+  {
+    id: 'warm-sepia',
+    name: 'Warm Parchment',
+    hex: '#fbf7ee',
+    isDark: false,
+    description: 'Soft bookish sepia, easy on eyes'
+  },
+  {
+    id: 'cool-ice',
+    name: 'Nordic Frost',
+    hex: '#f1f5f9',
+    isDark: false,
+    description: 'Crisp modern cool clarity'
+  },
+  {
+    id: 'sage-mint',
+    name: 'Sage Meadow',
+    hex: '#f2f8f4',
+    isDark: false,
+    description: 'Soothing natural green undertone'
+  },
+  {
+    id: 'lavender-mist',
+    name: 'Lavender Dusk',
+    hex: '#f6f3fa',
+    isDark: false,
+    description: 'Gentle calm creative lilac'
+  },
+  {
+    id: 'midnight-navy',
+    name: 'Midnight Navy',
+    hex: '#0a1120',
+    isDark: true,
+    description: 'Deep navy for focused night study'
+  },
+  {
+    id: 'deep-obsidian',
+    name: 'Dark Obsidian',
+    hex: '#0f172a',
+    isDark: true,
+    description: 'Classic dark mode slate'
+  },
+  {
+    id: 'charcoal-noir',
+    name: 'Charcoal Noir',
+    hex: '#18181b',
+    isDark: true,
+    description: 'Sophisticated warm carbon dark'
+  },
+  {
+    id: 'forest-night',
+    name: 'Evergreen Pine',
+    hex: '#061a14',
+    isDark: true,
+    description: 'Deep tranquil herbal dark'
+  },
+  {
+    id: 'pure-oled',
+    name: 'Pure OLED Black',
+    hex: '#000000',
+    isDark: true,
+    description: 'High-contrast true black'
+  }
+];
+
 export interface RGB {
   r: number;
   g: number;
@@ -132,6 +214,16 @@ export function getContrastingTextColor(hex: string): '#ffffff' | '#0f172a' {
   // Standard sRGB luminance calculation
   const yiq = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
   return yiq >= 150 ? '#0f172a' : '#ffffff';
+}
+
+/**
+ * Returns whether a color is perceptually dark
+ */
+export function isColorDark(hex: string): boolean {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return false;
+  const yiq = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+  return yiq < 140;
 }
 
 /**
@@ -231,4 +323,101 @@ export function getSavedThemeColor(): string {
 export function resetThemeColor(): string {
   applyThemeColor(DEFAULT_THEME_COLOR, true);
   return DEFAULT_THEME_COLOR;
+}
+
+/**
+ * Applies custom background canvas color
+ */
+export function applyBackgroundColor(hex: string | null, saveToStorage: boolean = true): boolean {
+  if (typeof window === 'undefined') return true;
+
+  const root = document.documentElement;
+
+  if (!hex || hex === 'default') {
+    // Clear custom background variables to revert to default theme mode
+    root.style.removeProperty('--bg-canvas');
+    root.style.removeProperty('--bg-surface');
+    root.style.removeProperty('--bg-surface-elevated');
+    root.style.removeProperty('--border-surface');
+    root.style.removeProperty('--text-surface-main');
+    root.style.removeProperty('--text-surface-muted');
+    document.body.style.removeProperty('background-color');
+
+    if (saveToStorage) {
+      try {
+        localStorage.removeItem(THEME_BG_STORAGE_KEY);
+        window.dispatchEvent(new CustomEvent('studymate_bg_change', { detail: { hex: null } }));
+      } catch {
+        // ignore
+      }
+    }
+    return true;
+  }
+
+  const validHex = sanitizeHex(hex);
+  if (!validHex) return false;
+
+  const dark = isColorDark(validHex);
+
+  // Calculate harmonious surface and border shades
+  const surfaceHex = dark ? adjustBrightness(validHex, 8) : '#ffffff';
+  const elevatedHex = dark ? adjustBrightness(validHex, 14) : '#ffffff';
+  const borderHex = dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)';
+  const textMain = dark ? '#f8fafc' : '#0f172a';
+  const textMuted = dark ? '#94a3b8' : '#64748b';
+
+  // Apply CSS variables
+  root.style.setProperty('--bg-canvas', validHex);
+  root.style.setProperty('--bg-surface', surfaceHex);
+  root.style.setProperty('--bg-surface-elevated', elevatedHex);
+  root.style.setProperty('--border-surface', borderHex);
+  root.style.setProperty('--text-surface-main', textMain);
+  root.style.setProperty('--text-surface-muted', textMuted);
+
+  document.body.style.backgroundColor = validHex;
+
+  // Sync dark class for Tailwind dark: variants if background luminance requires it
+  if (dark) {
+    root.classList.add('dark');
+  } else {
+    // only remove if not explicitly in dark mode preference
+    const savedTheme = localStorage.getItem('studymate_theme');
+    if (savedTheme !== 'dark') {
+      root.classList.remove('dark');
+    }
+  }
+
+  if (saveToStorage) {
+    try {
+      localStorage.setItem(THEME_BG_STORAGE_KEY, validHex);
+      window.dispatchEvent(new CustomEvent('studymate_bg_change', { detail: { hex: validHex } }));
+    } catch {
+      // ignore
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Gets saved background color or null if default
+ */
+export function getSavedBackgroundColor(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const saved = localStorage.getItem(THEME_BG_STORAGE_KEY);
+    if (saved && sanitizeHex(saved)) {
+      return sanitizeHex(saved)!;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+/**
+ * Resets background color to default
+ */
+export function resetBackgroundColor(): void {
+  applyBackgroundColor(null, true);
 }
