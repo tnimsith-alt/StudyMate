@@ -45,8 +45,10 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
   const [targetHours, setTargetHours] = useState(100);
   const [loggedMinutes, setLoggedMinutes] = useState(0);
   const [notes, setNotes] = useState('');
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   useEffect(() => {
+    setIsConfirmingDelete(false);
     if (editingSubject) {
       setName(editingSubject.name);
       setCategory(editingSubject.category || 'Science');
@@ -101,8 +103,6 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
     }
     onClose();
   };
-
-  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   const handleDelete = () => {
     if (editingSubject && onDelete) {
