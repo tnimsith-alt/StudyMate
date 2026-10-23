@@ -53,8 +53,8 @@ export const SubjectTabs: React.FC<SubjectTabsProps> = ({
           : 'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300';
       default:
         return isActive
-          ? 'bg-blue-600 text-white'
-          : 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300';
+          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+          : 'bg-theme-light text-theme-primary';
     }
   };
 
@@ -120,7 +120,7 @@ export const SubjectTabs: React.FC<SubjectTabsProps> = ({
             id="add-subject-tab-btn"
             type="button"
             onClick={onAddSubject}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all cursor-pointer ml-1"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-400 transition-all cursor-pointer ml-1"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Subject</span>

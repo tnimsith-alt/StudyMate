@@ -19,10 +19,41 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="StudyMate LK" />
+
+    <!-- Synchronous zero-flash theme & dark mode initialization -->
+    <script>
+      (function() {
+        try {
+          // Initialize dark mode
+          var savedDark = localStorage.getItem('studymate_theme');
+          var isDark = savedDark === 'dark' || (!savedDark && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          }
+
+          // Initialize custom accent color
+          var savedAccent = localStorage.getItem('studymate_theme_accent') || '#2563eb';
+          if (/^#[0-9A-Fa-f]{6}$/.test(savedAccent)) {
+            var c = savedAccent.substring(1);
+            var r = parseInt(c.substring(0, 2), 16);
+            var g = parseInt(c.substring(2, 4), 16);
+            var b = parseInt(c.substring(4, 6), 16);
+            var root = document.documentElement;
+            root.style.setProperty('--primary', savedAccent);
+            root.style.setProperty('--primary-rgb', r + ', ' + g + ', ' + b);
+            root.style.setProperty('--primary-light', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.08)');
+            root.style.setProperty('--primary-light-dark', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.18)');
+            root.style.setProperty('--primary-light-border', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.28)');
+            root.style.setProperty('--primary-glow', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.35)');
+            var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+            root.style.setProperty('--primary-contrast', yiq >= 150 ? '#0f172a' : '#ffffff');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

@@ -2,6 +2,51 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Dynamic Theme Accent Variables (managed via CSS variables and localStorage) */
+:root {
+  --primary: #2563eb;
+  --primary-rgb: 37, 99, 235;
+  --primary-hover: #1d4ed8;
+  --primary-active: #1e40af;
+  --primary-light: rgba(37, 99, 235, 0.08);
+  --primary-light-dark: rgba(37, 99, 235, 0.18);
+  --primary-light-border: rgba(37, 99, 235, 0.28);
+  --primary-glow: rgba(37, 99, 235, 0.35);
+  --primary-contrast: #ffffff;
+}
+
+.dark {
+  --primary-light: rgba(37, 99, 235, 0.18);
+  --primary-light-border: rgba(37, 99, 235, 0.35);
+  --primary-glow: rgba(37, 99, 235, 0.45);
+}
+
+/* Dynamic Theme Accent Utilities */
+.bg-theme-primary {
+  background-color: var(--primary);
+}
+.hover\:bg-theme-hover:hover {
+  background-color: var(--primary-hover);
+}
+.text-theme-primary {
+  color: var(--primary);
+}
+.border-theme-primary {
+  border-color: var(--primary);
+}
+.border-theme-light {
+  border-color: var(--primary-light-border);
+}
+.bg-theme-light {
+  background-color: var(--primary-light);
+}
+.shadow-theme-glow {
+  box-shadow: 0 4px 14px 0 var(--primary-glow);
+}
+.ring-theme-primary {
+  --tw-ring-color: var(--primary);
+}
+
 /* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
@@ -58,4 +103,3 @@ html {
 .animate-skeleton-pulse {
   animation: pulseSkeleton 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
-

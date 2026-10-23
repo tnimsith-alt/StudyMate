@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   X, BookOpen, Clock, CheckCircle2, History, Sparkles, 
   BarChart2, FolderOpen, Save, Download, Plus, ChevronRight,
-  Award, Flame, Target, FileText, Layers, Smartphone, Check, Home
+  Award, Flame, Target, FileText, Layers, Smartphone, Check, Home, Palette
 } from 'lucide-react';
 import { Subject, UserStats, StudyTask, ExamResult, SubjectFile } from '../types';
 import { calculateSubjectProgress } from '../utils/storage';
@@ -22,6 +22,7 @@ interface SlideBarDrawerProps {
   subjectFiles: SubjectFile[];
   onOpenBackupModal: () => void;
   onOpenAddSubject: () => void;
+  onOpenThemeCustomizer: () => void;
 }
 
 export function SlideBarDrawer({
@@ -38,7 +39,8 @@ export function SlideBarDrawer({
   examResults,
   subjectFiles,
   onOpenBackupModal,
-  onOpenAddSubject
+  onOpenAddSubject,
+  onOpenThemeCustomizer
 }: SlideBarDrawerProps) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
@@ -401,6 +403,28 @@ export function SlideBarDrawer({
                   </div>
                 )}
               </div>
+
+              {/* Theme Customizer Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenThemeCustomizer();
+                  onClose();
+                }}
+                className="w-full flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <Palette className="w-4 h-4 text-theme-primary" style={{ color: 'var(--primary)' }} />
+                  <span>Customize Theme Accent Color</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span 
+                    className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs"
+                    style={{ backgroundColor: 'var(--primary)' }}
+                  />
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                </div>
+              </button>
 
               <div className="grid grid-cols-2 gap-2">
                 <button
