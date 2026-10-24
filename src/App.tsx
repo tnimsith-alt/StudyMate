@@ -3,7 +3,7 @@ import {
   Flame, Clock, Sparkles, CheckCircle2, BookOpen, 
   BarChart2, Save, Download, Plus, Settings, ChevronRight, RotateCcw,
   History, FolderOpen, MoreVertical, Menu, X, ArrowDown, ArrowUp, ArrowRight,
-  Layers, CheckSquare, GraduationCap, Home, Palette
+  Layers, CheckSquare, GraduationCap, Home, Palette, Maximize2, Minimize2
 } from 'lucide-react';
 import { Subject, StudyTask, UserStats, TimerSession, ExamResult, SubjectFile, ActivityLogEntry } from './types';
 import { 
@@ -69,6 +69,28 @@ export default function App() {
   const [themeColor, setThemeColor] = useState<string>(() => getSavedThemeColor());
   const [bgColor, setBgColor] = useState<string | null>(() => getSavedBackgroundColor());
   const [surfaceColor, setSurfaceColor] = useState<string | null>(() => getSavedSurfaceColor());
+
+  // Screen width mode: fill screen on PC by default, persisted in localStorage
+  const [isFillScreen, setIsFillScreen] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('studymate_pc_screen_fill');
+      if (saved !== null) return saved === 'true';
+      return true;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('studymate_pc_screen_fill', isFillScreen ? 'true' : 'false');
+    } catch {
+      // ignore
+    }
+  }, [isFillScreen]);
+
+  const containerClass = isFillScreen
+    ? 'w-full px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16'
+    : 'w-full max-w-7xl mx-auto px-4 sm:px-6';
 
   useEffect(() => {
     if (darkMode) {
@@ -738,7 +760,7 @@ export default function App() {
         className="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md transition-colors shadow-2xs shrink-0"
         style={{ backgroundColor: 'var(--bg-surface)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className={`${containerClass} h-16 flex items-center justify-between gap-4 transition-all duration-200`}>
           
           {/* Brand Logo & Title */}
           <button
@@ -852,6 +874,22 @@ export default function App() {
               />
             </label>
 
+            {/* Fill Screen (PC Mode) Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsFillScreen(!isFillScreen)}
+              title={isFillScreen ? "Switch to Standard Contained Width" : "Fill Screen (PC Mode)"}
+              aria-label="Toggle fill screen mode"
+              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer shadow-xs ${
+                isFillScreen
+                  ? 'border-blue-300 dark:border-blue-800 bg-blue-50/70 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
+                  : 'border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              {isFillScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              <span className="hidden lg:inline">{isFillScreen ? 'Fill Screen' : 'Standard'}</span>
+            </button>
+
             {/* Dark Mode Toggle */}
             <ThemeToggle
               darkMode={darkMode}
@@ -923,7 +961,7 @@ export default function App() {
       </header>
 
       {/* 2. MAIN APPLICATION CONTENT - SINGLE SECTION VISIBLE AT A TIME */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col">
+      <main className={`flex-1 ${containerClass} py-6 sm:py-8 flex flex-col transition-all duration-200`}>
         
         {/* Breadcrumb & Section Navigation Bar for Focused Non-Home Sections */}
         {activeNav !== 'home' && (
@@ -967,7 +1005,7 @@ export default function App() {
         <PageTransition routeKey={activeNav}>
           {/* SECTION: HOMEPAGE (Only section navigations, no scroll down) */}
           {activeNav === 'home' && (
-            <div className="flex-1 flex flex-col justify-center py-4 sm:py-8 max-w-6xl mx-auto w-full">
+            <div className={`flex-1 flex flex-col justify-center py-4 sm:py-8 w-full ${isFillScreen ? 'max-w-none' : 'max-w-6xl mx-auto'}`}>
               <div className="text-center mb-6 sm:mb-8">
                 <div 
                   className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase border mb-2"
@@ -988,7 +1026,7 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4 w-full">
+              <div className={`grid grid-cols-1 sm:grid-cols-2 ${isFillScreen ? 'lg:grid-cols-4 2xl:grid-cols-4' : 'lg:grid-cols-3 xl:grid-cols-4'} gap-4 sm:gap-6 w-full`}>
                 {/* 1. Syllabus */}
                 <button
                   type="button"
@@ -1396,7 +1434,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-3xl mx-auto py-2">
+            <div className={`w-full ${isFillScreen ? 'max-w-5xl 2xl:max-w-6xl' : 'max-w-3xl'} mx-auto py-2`}>
               <StudyTimer
                 subjects={subjects}
                 activeSubjectId={activeSubjectId}
@@ -1423,7 +1461,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-4xl mx-auto py-2">
+            <div className={`w-full ${isFillScreen ? 'max-w-6xl 2xl:max-w-7xl' : 'max-w-4xl'} mx-auto py-2`}>
               <TodayTasks
                 tasks={tasks}
                 subjects={subjects}
@@ -1454,7 +1492,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            <div className={`w-full ${isFillScreen ? 'max-w-none' : 'max-w-6xl mx-auto'}`}>
               <ExamResultsView
                 subjects={subjects}
                 examResults={examResults}
@@ -1490,7 +1528,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            <div className={`w-full ${isFillScreen ? 'max-w-none' : 'max-w-6xl mx-auto'}`}>
               <SubjectFilesView
                 subjects={subjects}
                 files={subjectFiles}
@@ -1519,7 +1557,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            <div className={`w-full ${isFillScreen ? 'max-w-none' : 'max-w-6xl mx-auto'}`}>
               <HistoryView
                 taskHistory={taskHistory}
                 sessions={sessions}
@@ -1558,7 +1596,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-3xl mx-auto py-2">
+            <div className={`w-full ${isFillScreen ? 'max-w-5xl 2xl:max-w-6xl' : 'max-w-3xl'} mx-auto py-2`}>
               <AITutor
                 subjects={subjects}
                 activeSubjectId={activeSubjectId}
@@ -1572,8 +1610,8 @@ export default function App() {
 
       {/* 3. MINIMALIST MODERN FOOTER (Shown on section views, hidden on home to preserve single-screen fit) */}
       {activeNav !== 'home' && (
-        <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 px-4 sm:px-6 shrink-0 mt-8">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 shrink-0 mt-8">
+          <div className={`${containerClass} flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-200`}>
             <button
               type="button"
               onClick={() => navigateToSection('home')}

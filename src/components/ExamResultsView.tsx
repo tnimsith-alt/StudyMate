@@ -285,7 +285,8 @@ export function ExamResultsView({
           <button
             type="button"
             onClick={handleOpenAddModal}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 text-white font-bold text-sm rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
           >
             <Plus className="w-4 h-4" />
             <span>Log New Exam Score</span>
