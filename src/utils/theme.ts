@@ -12,6 +12,7 @@ export interface BackgroundPreset {
   id: string;
   name: string;
   hex: string;
+  surfaceHex: string;
   isDark: boolean;
   description: string;
 }
@@ -19,6 +20,7 @@ export interface BackgroundPreset {
 export const DEFAULT_THEME_COLOR = '#2563eb'; // Classic Sapphire Blue
 export const THEME_STORAGE_KEY = 'studymate_theme_accent';
 export const THEME_BG_STORAGE_KEY = 'studymate_theme_bg';
+export const THEME_SURFACE_STORAGE_KEY = 'studymate_theme_surface';
 
 export const THEME_COLOR_PRESETS: ThemeColorPreset[] = [
   {
@@ -88,71 +90,81 @@ export const THEME_BACKGROUND_PRESETS: BackgroundPreset[] = [
     id: 'default-light',
     name: 'Crisp Slate',
     hex: '#f8fafc',
+    surfaceHex: '#ffffff',
     isDark: false,
-    description: 'Standard neutral light paper canvas'
+    description: 'Standard neutral light paper canvas with clean white card surfaces'
   },
   {
     id: 'warm-sepia',
     name: 'Warm Parchment',
     hex: '#fbf7ee',
+    surfaceHex: '#fffefb',
     isDark: false,
-    description: 'Soft bookish sepia, easy on eyes'
+    description: 'Soft bookish sepia canvas with warm ivory card surfaces'
   },
   {
     id: 'cool-ice',
     name: 'Nordic Frost',
     hex: '#f1f5f9',
+    surfaceHex: '#ffffff',
     isDark: false,
-    description: 'Crisp modern cool clarity'
+    description: 'Crisp modern cool clarity with pure white cards'
   },
   {
     id: 'sage-mint',
     name: 'Sage Meadow',
     hex: '#f2f8f4',
+    surfaceHex: '#fbfffb',
     isDark: false,
-    description: 'Soothing natural green undertone'
+    description: 'Soothing natural green undertone with tinted card surfaces'
   },
   {
     id: 'lavender-mist',
     name: 'Lavender Dusk',
     hex: '#f6f3fa',
+    surfaceHex: '#fcfaff',
     isDark: false,
-    description: 'Gentle calm creative lilac'
+    description: 'Gentle calm creative lilac canvas and surfaces'
   },
   {
     id: 'midnight-navy',
     name: 'Midnight Navy',
     hex: '#0a1120',
+    surfaceHex: '#121e36',
     isDark: true,
-    description: 'Deep navy for focused night study'
+    description: 'Deep navy for focused night study with midnight card surfaces'
   },
   {
     id: 'deep-obsidian',
     name: 'Dark Obsidian',
     hex: '#0f172a',
+    surfaceHex: '#1e293b',
     isDark: true,
-    description: 'Classic dark mode slate'
+    description: 'Classic dark mode slate canvas and card surfaces'
   },
   {
     id: 'charcoal-noir',
     name: 'Charcoal Noir',
     hex: '#18181b',
+    surfaceHex: '#27272a',
     isDark: true,
-    description: 'Sophisticated warm carbon dark'
+    description: 'Sophisticated warm carbon dark with elevated card surfaces'
   },
   {
     id: 'forest-night',
     name: 'Evergreen Pine',
     hex: '#061a14',
+    surfaceHex: '#0d2820',
     isDark: true,
-    description: 'Deep tranquil herbal dark'
+    description: 'Deep tranquil herbal dark canvas with evergreen surfaces'
   },
   {
     id: 'pure-oled',
     name: 'Pure OLED Black',
     hex: '#000000',
+    surfaceHex: '#121215',
     isDark: true,
-    description: 'High-contrast true black'
+    description: 'High-contrast true black canvas with elevated card surfaces'
   }
 ];
 
@@ -326,18 +338,24 @@ export function resetThemeColor(): string {
 }
 
 /**
- * Applies custom background canvas color
+ * Applies custom background canvas and surface colors
  */
-export function applyBackgroundColor(hex: string | null, saveToStorage: boolean = true): boolean {
+export function applyBackgroundColor(
+  bgHex: string | null, 
+  surfaceHex?: string | null, 
+  saveToStorage: boolean = true
+): boolean {
   if (typeof window === 'undefined') return true;
 
   const root = document.documentElement;
 
-  if (!hex || hex === 'default') {
-    // Clear custom background variables to revert to default theme mode
+  if (!bgHex || bgHex === 'default') {
+    // Clear custom background & surface variables to revert to default theme mode
+    root.removeAttribute('data-custom-bg');
     root.style.removeProperty('--bg-canvas');
     root.style.removeProperty('--bg-surface');
     root.style.removeProperty('--bg-surface-elevated');
+    root.style.removeProperty('--bg-surface-subtle');
     root.style.removeProperty('--border-surface');
     root.style.removeProperty('--text-surface-main');
     root.style.removeProperty('--text-surface-muted');
@@ -346,7 +364,8 @@ export function applyBackgroundColor(hex: string | null, saveToStorage: boolean 
     if (saveToStorage) {
       try {
         localStorage.removeItem(THEME_BG_STORAGE_KEY);
-        window.dispatchEvent(new CustomEvent('studymate_bg_change', { detail: { hex: null } }));
+        localStorage.removeItem(THEME_SURFACE_STORAGE_KEY);
+        window.dispatchEvent(new CustomEvent('studymate_bg_change', { detail: { hex: null, surfaceHex: null } }));
       } catch {
         // ignore
       }
@@ -354,30 +373,52 @@ export function applyBackgroundColor(hex: string | null, saveToStorage: boolean 
     return true;
   }
 
-  const validHex = sanitizeHex(hex);
-  if (!validHex) return false;
+  const validBg = sanitizeHex(bgHex);
+  if (!validBg) return false;
 
-  const dark = isColorDark(validHex);
+  const dark = isColorDark(validBg);
+  root.setAttribute('data-custom-bg', 'true');
 
-  // Calculate harmonious surface and border shades
-  const surfaceHex = dark ? adjustBrightness(validHex, 8) : '#ffffff';
-  const elevatedHex = dark ? adjustBrightness(validHex, 14) : '#ffffff';
-  const borderHex = dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)';
-  const textMain = dark ? '#f8fafc' : '#0f172a';
-  const textMuted = dark ? '#94a3b8' : '#64748b';
+  const validSurface = surfaceHex ? sanitizeHex(surfaceHex) : null;
+
+  let computedSurface: string;
+  let computedElevated: string;
+  let computedSubtle: string;
+
+  if (validSurface) {
+    computedSurface = validSurface;
+    computedElevated = dark ? adjustBrightness(validSurface, 6) : '#ffffff';
+    computedSubtle = dark ? adjustBrightness(validSurface, -3) : adjustBrightness(validSurface, -4);
+  } else {
+    if (dark) {
+      computedSurface = validBg === '#000000' ? '#121215' : adjustBrightness(validBg, 10);
+      computedElevated = validBg === '#000000' ? '#1c1c22' : adjustBrightness(validBg, 16);
+      computedSubtle = validBg === '#000000' ? '#18181d' : adjustBrightness(validBg, 5);
+    } else {
+      computedSurface = '#ffffff';
+      computedElevated = '#ffffff';
+      computedSubtle = adjustBrightness(validBg, -4);
+    }
+  }
+
+  const isSurfaceDark = isColorDark(computedSurface);
+  const borderHex = (dark || isSurfaceDark) ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)';
+  const textMain = isSurfaceDark ? '#f8fafc' : '#0f172a';
+  const textMuted = isSurfaceDark ? '#94a3b8' : '#64748b';
 
   // Apply CSS variables
-  root.style.setProperty('--bg-canvas', validHex);
-  root.style.setProperty('--bg-surface', surfaceHex);
-  root.style.setProperty('--bg-surface-elevated', elevatedHex);
+  root.style.setProperty('--bg-canvas', validBg);
+  root.style.setProperty('--bg-surface', computedSurface);
+  root.style.setProperty('--bg-surface-elevated', computedElevated);
+  root.style.setProperty('--bg-surface-subtle', computedSubtle);
   root.style.setProperty('--border-surface', borderHex);
   root.style.setProperty('--text-surface-main', textMain);
   root.style.setProperty('--text-surface-muted', textMuted);
 
-  document.body.style.backgroundColor = validHex;
+  document.body.style.backgroundColor = validBg;
 
-  // Sync dark class for Tailwind dark: variants if background luminance requires it
-  if (dark) {
+  // Sync dark class for Tailwind dark: variants if background or surface luminance requires it
+  if (dark || isSurfaceDark) {
     root.classList.add('dark');
   } else {
     // only remove if not explicitly in dark mode preference
@@ -389,8 +430,11 @@ export function applyBackgroundColor(hex: string | null, saveToStorage: boolean 
 
   if (saveToStorage) {
     try {
-      localStorage.setItem(THEME_BG_STORAGE_KEY, validHex);
-      window.dispatchEvent(new CustomEvent('studymate_bg_change', { detail: { hex: validHex } }));
+      localStorage.setItem(THEME_BG_STORAGE_KEY, validBg);
+      localStorage.setItem(THEME_SURFACE_STORAGE_KEY, computedSurface);
+      window.dispatchEvent(new CustomEvent('studymate_bg_change', { 
+        detail: { hex: validBg, surfaceHex: computedSurface } 
+      }));
     } catch {
       // ignore
     }
@@ -416,8 +460,24 @@ export function getSavedBackgroundColor(): string | null {
 }
 
 /**
- * Resets background color to default
+ * Gets saved surface color or null if default
+ */
+export function getSavedSurfaceColor(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const saved = localStorage.getItem(THEME_SURFACE_STORAGE_KEY);
+    if (saved && sanitizeHex(saved)) {
+      return sanitizeHex(saved)!;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+/**
+ * Resets background and surface colors to default
  */
 export function resetBackgroundColor(): void {
-  applyBackgroundColor(null, true);
+  applyBackgroundColor(null, null, true);
 }

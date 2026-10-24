@@ -49,19 +49,35 @@
             root.style.setProperty('--primary-contrast', yiq >= 150 ? '#0f172a' : '#ffffff');
           }
 
-          // Initialize custom background canvas
+          // Initialize custom background & surface canvas
           var savedBg = localStorage.getItem('studymate_theme_bg');
+          var savedSurface = localStorage.getItem('studymate_theme_surface');
           if (savedBg && /^#[0-9A-Fa-f]{6}$/.test(savedBg)) {
             var root = document.documentElement;
+            root.setAttribute('data-custom-bg', 'true');
             root.style.setProperty('--bg-canvas', savedBg);
             var bc = savedBg.substring(1);
             var br = parseInt(bc.substring(0, 2), 16);
             var bg = parseInt(bc.substring(2, 4), 16);
             var bb = parseInt(bc.substring(4, 6), 16);
             var byiq = (br * 299 + bg * 587 + bb * 114) / 1000;
-            if (byiq < 140) {
+            var isBgDark = byiq < 140;
+            var sHex = (savedSurface && /^#[0-9A-Fa-f]{6}$/.test(savedSurface))
+              ? savedSurface
+              : (isBgDark ? '#1e293b' : '#ffffff');
+            var sc = sHex.substring(1);
+            var sr = parseInt(sc.substring(0, 2), 16);
+            var sg = parseInt(sc.substring(2, 4), 16);
+            var sb = parseInt(sc.substring(4, 6), 16);
+            var syiq = (sr * 299 + sg * 587 + sb * 114) / 1000;
+            var isSurfaceDark = syiq < 140;
+            if (isBgDark || isSurfaceDark) {
               root.classList.add('dark');
             }
+            root.style.setProperty('--bg-surface', sHex);
+            root.style.setProperty('--bg-surface-elevated', sHex);
+            root.style.setProperty('--bg-surface-subtle', (isBgDark || isSurfaceDark) ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)');
+            root.style.setProperty('--border-surface', (isBgDark || isSurfaceDark) ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)');
           }
         } catch (e) {}
       })();

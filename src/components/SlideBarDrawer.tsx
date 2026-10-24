@@ -181,7 +181,10 @@ export function SlideBarDrawer({
           {/* Header */}
           <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-900/80">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+              <div 
+                className="w-8 h-8 rounded-xl text-white flex items-center justify-center font-bold text-sm shadow-xs"
+                style={{ backgroundColor: 'var(--primary)' }}
+              >
                 📚
               </div>
               <div>
@@ -207,8 +210,14 @@ export function SlideBarDrawer({
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6">
             
-            {/* Quick Metrics Banner */}
-            <div className="bg-linear-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-4 shadow-md">
+            {/* Quick Metrics Banner (Adapts to primary theme accent!) */}
+            <div 
+              className="text-white rounded-2xl p-4 shadow-md transition-all"
+              style={{
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
+                boxShadow: '0 4px 14px var(--primary-glow)'
+              }}
+            >
               <div className="flex items-center justify-between text-xs opacity-90 mb-2">
                 <span className="font-semibold flex items-center gap-1">
                   <Target className="w-3.5 h-3.5" /> G.C.E. A/L Goal
@@ -235,7 +244,7 @@ export function SlideBarDrawer({
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   Open Feature Modules
                 </span>
-                <span className="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">
+                <span className="text-[10px] font-semibold" style={{ color: 'var(--primary)' }}>
                   Tap to launch individually
                 </span>
               </div>
@@ -248,9 +257,13 @@ export function SlideBarDrawer({
                     key={item.id}
                     className={`group rounded-2xl border transition-all p-3 ${
                       isActive 
-                        ? 'bg-blue-50/90 dark:bg-blue-950/70 border-blue-400 dark:border-blue-700 shadow-xs' 
-                        : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-slate-700 hover:shadow-2xs'
+                        ? 'shadow-xs' 
+                        : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 hover:shadow-2xs'
                     }`}
+                    style={isActive ? { 
+                      backgroundColor: 'var(--primary-light)', 
+                      borderColor: 'var(--primary-light-border)' 
+                    } : {}}
                   >
                     <div className="flex items-center justify-between">
                       <button
@@ -261,14 +274,18 @@ export function SlideBarDrawer({
                         }}
                         className="flex items-center gap-3 min-w-0 flex-1 text-left cursor-pointer"
                       >
-                        <div className={`p-2.5 rounded-xl shrink-0 ${
-                          isActive 
-                            ? 'bg-blue-600 text-white shadow-xs' 
-                            : item.isHighlight
-                              ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-950 group-hover:text-blue-600'
-                        }`}>
-                          <Icon className="w-5 h-5" />
+                        <div 
+                          className="p-2.5 rounded-xl shrink-0 transition-colors"
+                          style={isActive ? { 
+                            backgroundColor: 'var(--primary)', 
+                            color: 'var(--primary-contrast)' 
+                          } : {}}
+                        >
+                          <Icon className={`w-5 h-5 ${
+                            !isActive && (item.isHighlight 
+                              ? 'text-amber-600' 
+                              : 'text-slate-600 dark:text-slate-400')
+                          }`} />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-bold truncate flex items-center gap-1.5 text-slate-900 dark:text-white">
@@ -296,9 +313,10 @@ export function SlideBarDrawer({
                           }}
                           className={`p-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                             isActive
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-blue-600 hover:text-white'
+                              ? 'text-white'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                           }`}
+                          style={isActive ? { backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' } : {}}
                           title={`Open ${item.label}`}
                         >
                           <ChevronRight className="w-4 h-4" />
@@ -322,7 +340,8 @@ export function SlideBarDrawer({
                     onOpenAddSubject();
                     onClose();
                   }}
-                  className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-0.5"
+                  className="text-xs font-semibold hover:underline flex items-center gap-0.5"
+                  style={{ color: 'var(--primary)' }}
                 >
                   <Plus className="w-3 h-3" /> Add Subject
                 </button>
@@ -343,9 +362,18 @@ export function SlideBarDrawer({
                       }}
                       className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                         isCur
-                          ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
+                          ? ''
                           : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300'
                       }`}
+                      style={
+                        isCur
+                          ? {
+                              borderColor: 'var(--primary)',
+                              backgroundColor: 'var(--primary-light)',
+                              color: 'var(--primary)',
+                            }
+                          : {}
+                      }
                     >
                       <div className="text-xs font-bold truncate">{s.name}</div>
                       <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
@@ -372,11 +400,11 @@ export function SlideBarDrawer({
                   className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
                     isInstalled
                       ? 'border-emerald-200 dark:border-emerald-900 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
-                      : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-200'
+                      : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <Smartphone className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <Smartphone className="w-4 h-4" style={{ color: 'var(--primary)' }} />
                     <span>{isInstalled ? 'App Installed on Device' : 'Install App on Phone / PC'}</span>
                   </div>
                   {isInstalled ? (
@@ -384,7 +412,7 @@ export function SlideBarDrawer({
                       <Check className="w-3.5 h-3.5" /> Installed
                     </span>
                   ) : (
-                    <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                    <span className="text-[11px] font-bold" style={{ color: 'var(--primary)' }}>
                       {deferredPrompt ? '1-Click Install' : 'Instructions'}
                     </span>
                   )}
@@ -393,7 +421,7 @@ export function SlideBarDrawer({
                 {showInstallHelp && !isInstalled && (
                   <div className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 space-y-1.5">
                     <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <Smartphone className="w-3.5 h-3.5 text-blue-600" /> How to install in Chrome / Safari:
+                      <Smartphone className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} /> How to install in Chrome / Safari:
                     </div>
                     <ul className="list-disc list-inside space-y-1 text-slate-500 dark:text-slate-400">
                       <li><strong>Chrome on PC/Mac:</strong> Click the <em>Install</em> icon in your address bar (top right).</li>
@@ -414,8 +442,8 @@ export function SlideBarDrawer({
                 className="w-full flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-theme-primary" style={{ color: 'var(--primary)' }} />
-                  <span>Customize Theme Accent Color</span>
+                  <Palette className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                  <span>Customize Theme & Surface Colors</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span 
@@ -435,14 +463,15 @@ export function SlideBarDrawer({
                   }}
                   className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  <Save className="w-3.5 h-3.5 text-blue-600" />
+                  <Save className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
                   <span>Backup / Restore</span>
                 </button>
 
                 <a
                   href="/api/download-project"
                   download="StudyMate-LK.zip"
-                  className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors cursor-pointer text-decoration-none"
+                  className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl text-white text-xs font-semibold transition-opacity hover:opacity-90 cursor-pointer text-decoration-none shadow-xs"
+                  style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Download ZIP</span>

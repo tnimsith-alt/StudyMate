@@ -274,7 +274,8 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
               id={`start-timer-subj-${subject.id}`}
               type="button"
               onClick={() => onOpenTimerForSubject(subject.id)}
-              className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
+              className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
             >
               <Clock className="w-4 h-4" />
               <span>Start Timer</span>
@@ -297,14 +298,14 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
             <span className="font-semibold text-slate-700 dark:text-slate-300">
               Syllabus Mastery
             </span>
-            <span className="font-bold text-blue-600 dark:text-blue-400">
+            <span className="font-bold" style={{ color: 'var(--primary)' }}>
               {overallProgress}% ({completedCount} / {totalSubtopics} completed)
             </span>
           </div>
           <div className="w-full h-3 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-linear-to-r from-blue-600 to-indigo-500 transition-all duration-500 rounded-full"
-              style={{ width: `${overallProgress}%` }}
+              className="h-full transition-all duration-500 rounded-full"
+              style={{ width: `${overallProgress}%`, backgroundColor: 'var(--primary)' }}
             />
           </div>
         </div>
@@ -358,7 +359,8 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
           <button
             type="submit"
             disabled={!quickTitle.trim()}
-            className="px-4 sm:px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer shadow-xs shrink-0"
+            className="px-4 sm:px-5 py-2.5 text-white font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer shadow-xs shrink-0"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
           >
             <Plus className="w-4 h-4" />
             <span>Add Topic</span>
@@ -370,7 +372,7 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
           onClick={() => setIsBulkModalOpen(true)}
           className="px-3.5 py-2.5 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-200 font-semibold text-xs sm:text-sm rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs shrink-0"
         >
-          <ListPlus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <ListPlus className="w-4 h-4" style={{ color: 'var(--primary)' }} />
           <span>Paste Topics</span>
         </button>
       </div>
@@ -381,7 +383,10 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
           totalSubtopics === 0 ? (
             /* Dedicated, inviting empty state when 0 topics exist */
             <div className="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 text-center shadow-xs">
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-3.5 border border-blue-100 dark:border-blue-900">
+              <div 
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3.5 border"
+                style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary)', borderColor: 'var(--primary)' }}
+              >
                 <BookOpen className="w-7 h-7" />
               </div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
@@ -395,7 +400,8 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
                 <button
                   type="button"
                   onClick={() => inputRef.current?.focus()}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl shadow-xs inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-4 py-2 text-white font-semibold text-xs rounded-xl shadow-xs inline-flex items-center gap-1.5 transition-opacity hover:opacity-90 cursor-pointer"
+                  style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
                 >
                   <Plus className="w-4 h-4" />
                   <span>Add First Topic</span>
@@ -406,7 +412,7 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
                   onClick={() => setIsBulkModalOpen(true)}
                   className="px-4 py-2 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <ListPlus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <ListPlus className="w-4 h-4" style={{ color: 'var(--primary)' }} />
                   <span>Paste Full Syllabus</span>
                 </button>
               </div>
@@ -454,9 +460,14 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
                         sub.progress === 100
                           ? 'bg-emerald-600 text-white shadow-xs'
                           : sub.progress > 0
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : 'border-2 border-slate-300 dark:border-slate-700 text-transparent hover:border-blue-500'
+                          ? 'text-white shadow-xs'
+                          : 'border-2 border-slate-300 dark:border-slate-700 text-transparent hover:border-slate-400'
                       }`}
+                      style={
+                        sub.progress > 0 && sub.progress < 100
+                          ? { backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }
+                          : {}
+                      }
                     >
                       {sub.progress === 100 ? (
                         <Check className="w-4 h-4 stroke-[3]" />
@@ -706,7 +717,7 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
                 />
                 <div className="mt-1.5 flex items-center justify-between text-xs text-slate-400">
                   <span>Numbers and bullet marks will be cleaned automatically</span>
-                  <span className="font-semibold text-blue-600 dark:text-blue-400">
+                  <span className="font-semibold" style={{ color: 'var(--primary)' }}>
                     {bulkText.split('\n').filter(l => l.trim().length > 0).length} topics detected
                   </span>
                 </div>
@@ -723,7 +734,8 @@ export const SubjectView: React.FC<SubjectViewProps> = ({
                 <button
                   type="submit"
                   disabled={bulkText.split('\n').filter(l => l.trim().length > 0).length === 0}
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 text-white text-xs font-bold rounded-xl shadow-xs transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                  style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
                 >
                   Add All Topics
                 </button>

@@ -22,7 +22,10 @@ import {
 } from './utils/storage';
 import { ThemeToggle } from './components/ThemeToggle';
 import { ThemeCustomizer } from './components/ThemeCustomizer';
-import { applyThemeColor, getSavedThemeColor, applyBackgroundColor, getSavedBackgroundColor } from './utils/theme';
+import { 
+  applyThemeColor, getSavedThemeColor, 
+  applyBackgroundColor, getSavedBackgroundColor, getSavedSurfaceColor 
+} from './utils/theme';
 import { SubjectTabs } from './components/SubjectTabs';
 import { SubjectView } from './components/SubjectView';
 import { StudyTimer } from './components/StudyTimer';
@@ -66,6 +69,7 @@ export default function App() {
 
   const [themeColor, setThemeColor] = useState<string>(() => getSavedThemeColor());
   const [bgColor, setBgColor] = useState<string | null>(() => getSavedBackgroundColor());
+  const [surfaceColor, setSurfaceColor] = useState<string | null>(() => getSavedSurfaceColor());
   const [isThemeCustomizerOpen, setIsThemeCustomizerOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -85,8 +89,8 @@ export default function App() {
   }, [themeColor]);
 
   useEffect(() => {
-    applyBackgroundColor(bgColor, false);
-  }, [bgColor]);
+    applyBackgroundColor(bgColor, surfaceColor, false);
+  }, [bgColor, surfaceColor]);
 
   // Data states
   const [subjects, setSubjects] = useState<Subject[]>(() => loadStoredSubjects());
@@ -203,7 +207,11 @@ export default function App() {
         }
         if (e.key === 'studymate_theme_bg') {
           setBgColor(e.newValue);
-          applyBackgroundColor(e.newValue, false);
+          applyBackgroundColor(e.newValue, getSavedSurfaceColor(), false);
+        }
+        if (e.key === 'studymate_theme_surface') {
+          setSurfaceColor(e.newValue);
+          applyBackgroundColor(getSavedBackgroundColor(), e.newValue, false);
         }
       }
     };
@@ -216,6 +224,7 @@ export default function App() {
 
     const handleCustomBgChange = (e: any) => {
       setBgColor(e.detail?.hex || null);
+      setSurfaceColor(e.detail?.surfaceHex || null);
     };
 
     window.addEventListener('storage', handleStorageEvent);
@@ -1242,13 +1251,14 @@ export default function App() {
                   <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-sm">
-                        <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        Quick Focus Session
+                        <Clock className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                        <span>Quick Focus Session</span>
                       </h3>
                       <button
                         type="button"
                         onClick={() => navigateToSection('timer')}
-                        className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-0.5 cursor-pointer"
+                        className="text-xs font-semibold hover:underline flex items-center gap-0.5 cursor-pointer"
+                        style={{ color: 'var(--primary)' }}
                       >
                         Open Timer <ChevronRight className="w-3.5 h-3.5" />
                       </button>
@@ -1259,7 +1269,8 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => navigateToSection('timer')}
-                      className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
+                      className="w-full py-2.5 text-white font-semibold text-xs rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+                      style={{ backgroundColor: 'var(--primary)' }}
                     >
                       Start 25m Pomodoro on {activeSubject.name}
                     </button>
@@ -1275,7 +1286,8 @@ export default function App() {
                       <button
                         type="button"
                         onClick={() => navigateToSection('tasks')}
-                        className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-0.5 cursor-pointer"
+                        className="text-xs font-semibold hover:underline flex items-center gap-0.5 cursor-pointer"
+                        style={{ color: 'var(--primary)' }}
                       >
                         View All <ChevronRight className="w-3.5 h-3.5" />
                       </button>
@@ -1291,7 +1303,8 @@ export default function App() {
                             type="checkbox"
                             checked={t.done}
                             readOnly
-                            className="rounded-xs accent-blue-600"
+                            className="rounded-xs cursor-pointer"
+                            style={{ accentColor: 'var(--primary)' }}
                           />
                           <span className={`truncate flex-1 ${t.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}`}>
                             {t.text}
@@ -1607,6 +1620,11 @@ export default function App() {
         currentBgColor={bgColor}
         onBgColorChange={(newBg) => {
           setBgColor(newBg);
+          broadcastSync('BG_CHANGED');
+        }}
+        currentSurfaceColor={surfaceColor}
+        onSurfaceColorChange={(newSurface) => {
+          setSurfaceColor(newSurface);
           broadcastSync('BG_CHANGED');
         }}
       />

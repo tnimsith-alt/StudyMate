@@ -302,7 +302,8 @@ export const SubjectModal: React.FC<SubjectModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-xl shadow-xs transition-colors cursor-pointer"
+                className="px-5 py-2 text-white text-sm font-semibold rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+                style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
               >
                 {editingSubject ? 'Save Changes' : 'Create Subject'}
               </button>

@@ -16,7 +16,10 @@
   --bg-canvas: #f8fafc;
   --bg-surface: #ffffff;
   --bg-surface-elevated: #ffffff;
+  --bg-surface-subtle: #f1f5f9;
   --border-surface: rgba(0, 0, 0, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
 }
 
 .dark {
@@ -26,12 +29,56 @@
   --bg-canvas: #020617;
   --bg-surface: #0f172a;
   --bg-surface-elevated: #1e293b;
+  --bg-surface-subtle: #1e293b;
   --border-surface: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
 }
 
 body {
   background-color: var(--bg-canvas);
   min-height: 100vh;
+}
+
+/* Dynamic Background & Surface Overrides when custom background is enabled */
+html[data-custom-bg="true"],
+html[data-custom-bg="true"] body {
+  background-color: var(--bg-canvas) !important;
+}
+
+/* Card surfaces: .bg-white and .dark:bg-slate-900 and .dark:bg-slate-850 */
+html[data-custom-bg="true"] .bg-white,
+html[data-custom-bg="true"] .dark .dark\:bg-slate-900,
+html[data-custom-bg="true"] .dark\:bg-slate-900,
+html[data-custom-bg="true"] .dark .dark\:bg-slate-850,
+html[data-custom-bg="true"] .dark\:bg-slate-850 {
+  background-color: var(--bg-surface) !important;
+}
+
+/* Secondary/subtle surfaces */
+html[data-custom-bg="true"] .bg-slate-50,
+html[data-custom-bg="true"] .bg-slate-100,
+html[data-custom-bg="true"] .dark .dark\:bg-slate-800,
+html[data-custom-bg="true"] .dark\:bg-slate-800,
+html[data-custom-bg="true"] .dark .dark\:bg-slate-800\/60,
+html[data-custom-bg="true"] .dark .dark\:bg-slate-800\/50,
+html[data-custom-bg="true"] .dark .dark\:bg-slate-950,
+html[data-custom-bg="true"] .dark\:bg-slate-950 {
+  background-color: var(--bg-surface-subtle) !important;
+}
+
+/* Borders */
+html[data-custom-bg="true"] .border-slate-200,
+html[data-custom-bg="true"] .border-slate-200\/80,
+html[data-custom-bg="true"] .border-slate-200\/60,
+html[data-custom-bg="true"] .border-slate-100,
+html[data-custom-bg="true"] .dark .dark\:border-slate-800,
+html[data-custom-bg="true"] .dark\:border-slate-800,
+html[data-custom-bg="true"] .dark .dark\:border-slate-800\/80,
+html[data-custom-bg="true"] .dark .dark\:border-slate-800\/60,
+html[data-custom-bg="true"] .dark .dark\:border-slate-700,
+html[data-custom-bg="true"] .dark\:border-slate-700 {
+  border-color: var(--border-surface) !important;
 }
 
 /* Dynamic Theme Accent Utilities */

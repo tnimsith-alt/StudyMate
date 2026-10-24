@@ -291,7 +291,8 @@ export function SubjectFilesView({
               setUploadSubjectId(selectedSubjectId !== 'all' ? selectedSubjectId : (subjects[0]?.id || ''));
               setIsUploadModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+            style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
           >
             <Upload className="w-4 h-4" />
             <span>Upload File</span>
@@ -667,7 +668,8 @@ export function SubjectFilesView({
                 <button
                   type="submit"
                   disabled={!selectedRawFile}
-                  className="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+                  className="px-5 py-2 text-xs font-bold disabled:opacity-50 text-white rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+                  style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
                 >
                   Upload & Save
                 </button>
@@ -685,7 +687,7 @@ export function SubjectFilesView({
             
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <h3 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
+                <FileText className="w-5 h-5" style={{ color: 'var(--primary)' }} />
                 Create Quick Study Note / Formulas
               </h3>
               <button
@@ -785,7 +787,8 @@ export function SubjectFilesView({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+                  className="px-5 py-2 text-xs font-bold text-white rounded-xl shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+                  style={{ backgroundColor: 'var(--primary)', color: 'var(--primary-contrast)' }}
                 >
                   Save Note
                 </button>
