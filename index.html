@@ -49,6 +49,10 @@
             root.style.setProperty('--primary-contrast', yiq >= 150 ? '#0f172a' : '#ffffff');
           }
 
+          // Initialize custom canvas background
+          var savedCanvasBg = localStorage.getItem('canvas-bg') || localStorage.getItem('studymate_canvas_bg') || '#0d1117';
+          document.documentElement.style.setProperty('--canvas-bg', savedCanvasBg);
+
           // Initialize custom background & surface canvas
           var savedBg = localStorage.getItem('studymate_theme_bg');
           var savedSurface = localStorage.getItem('studymate_theme_surface');
@@ -80,6 +84,32 @@
             root.style.setProperty('--border-surface', (isBgDark || isSurfaceDark) ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)');
           }
         } catch (e) {}
+
+        // Listen to the bg-picker (change and input events) and update --canvas-bg instantly and save to localStorage
+        function setupBgPicker() {
+          var bgPicker = document.getElementById('bg-picker');
+          if (bgPicker) {
+            var savedColor = localStorage.getItem('canvas-bg') || localStorage.getItem('studymate_canvas_bg') || '#0d1117';
+            bgPicker.value = savedColor;
+            document.documentElement.style.setProperty('--canvas-bg', savedColor);
+            document.body.style.setProperty('--canvas-bg', savedColor);
+
+            function onColorUpdate(e) {
+              var color = e.target.value;
+              document.documentElement.style.setProperty('--canvas-bg', color);
+              document.body.style.setProperty('--canvas-bg', color);
+              localStorage.setItem('canvas-bg', color);
+              localStorage.setItem('studymate_canvas_bg', color);
+            }
+            bgPicker.addEventListener('input', onColorUpdate);
+            bgPicker.addEventListener('change', onColorUpdate);
+          }
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setupBgPicker);
+        } else {
+          setupBgPicker();
+        }
       })();
     </script>
   </head>

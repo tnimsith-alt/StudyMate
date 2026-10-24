@@ -22,7 +22,6 @@ interface SlideBarDrawerProps {
   subjectFiles: SubjectFile[];
   onOpenBackupModal: () => void;
   onOpenAddSubject: () => void;
-  onOpenThemeCustomizer: () => void;
 }
 
 export function SlideBarDrawer({
@@ -39,8 +38,7 @@ export function SlideBarDrawer({
   examResults,
   subjectFiles,
   onOpenBackupModal,
-  onOpenAddSubject,
-  onOpenThemeCustomizer
+  onOpenAddSubject
 }: SlideBarDrawerProps) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
@@ -432,23 +430,23 @@ export function SlideBarDrawer({
                 )}
               </div>
 
-              {/* Theme Customizer Button */}
+              {/* Background Color Picker Drawer Link */}
               <button
                 type="button"
                 onClick={() => {
-                  onOpenThemeCustomizer();
+                  document.getElementById('bg-picker')?.click();
                   onClose();
                 }}
                 className="w-full flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-2">
                   <Palette className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-                  <span>Customize Theme & Surface Colors</span>
+                  <span>Custom Background Color</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span 
                     className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs"
-                    style={{ backgroundColor: 'var(--primary)' }}
+                    style={{ backgroundColor: 'var(--canvas-bg, #0d1117)' }}
                   />
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                 </div>

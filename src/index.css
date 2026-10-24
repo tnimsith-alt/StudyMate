@@ -4,6 +4,7 @@
 
 /* Dynamic Theme Accent & Background Variables (managed via CSS variables and localStorage) */
 :root {
+  --canvas-bg: #0d1117;
   --primary: #2563eb;
   --primary-rgb: 37, 99, 235;
   --primary-hover: #1d4ed8;
@@ -13,7 +14,7 @@
   --primary-light-border: rgba(37, 99, 235, 0.28);
   --primary-glow: rgba(37, 99, 235, 0.35);
   --primary-contrast: #ffffff;
-  --bg-canvas: #f8fafc;
+  --bg-canvas: var(--canvas-bg, #0d1117);
   --bg-surface: #ffffff;
   --bg-surface-elevated: #ffffff;
   --bg-surface-subtle: #f1f5f9;
@@ -23,27 +24,31 @@
 }
 
 .dark {
+  --canvas-bg: #0d1117;
   --primary-light: rgba(37, 99, 235, 0.18);
   --primary-light-border: rgba(37, 99, 235, 0.35);
   --primary-glow: rgba(37, 99, 235, 0.45);
-  --bg-canvas: #020617;
+  --bg-canvas: var(--canvas-bg, #0d1117);
   --bg-surface: #0f172a;
   --bg-surface-elevated: #1e293b;
   --bg-surface-subtle: #1e293b;
   --border-surface: rgba(255, 255, 255, 0.1);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
+  background-color: var(--canvas-bg, #0d1117);
 }
 
-body {
-  background-color: var(--bg-canvas);
+html,
+body,
+#root {
+  background-color: var(--canvas-bg, #0d1117);
   min-height: 100vh;
 }
 
 /* Dynamic Background & Surface Overrides when custom background is enabled */
 html[data-custom-bg="true"],
 html[data-custom-bg="true"] body {
-  background-color: var(--bg-canvas) !important;
+  background-color: var(--canvas-bg, #0d1117) !important;
 }
 
 /* Card surfaces: .bg-white and .dark:bg-slate-900 and .dark:bg-slate-850 */

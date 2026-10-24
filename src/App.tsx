@@ -21,7 +21,6 @@ import {
   DEFAULT_EXAM_RESULTS, DEFAULT_SUBJECT_FILES
 } from './utils/storage';
 import { ThemeToggle } from './components/ThemeToggle';
-import { ThemeCustomizer } from './components/ThemeCustomizer';
 import { 
   applyThemeColor, getSavedThemeColor, 
   applyBackgroundColor, getSavedBackgroundColor, getSavedSurfaceColor 
@@ -70,7 +69,6 @@ export default function App() {
   const [themeColor, setThemeColor] = useState<string>(() => getSavedThemeColor());
   const [bgColor, setBgColor] = useState<string | null>(() => getSavedBackgroundColor());
   const [surfaceColor, setSurfaceColor] = useState<string | null>(() => getSavedSurfaceColor());
-  const [isThemeCustomizerOpen, setIsThemeCustomizerOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -91,6 +89,39 @@ export default function App() {
   useEffect(() => {
     applyBackgroundColor(bgColor, surfaceColor, false);
   }, [bgColor, surfaceColor]);
+
+  // JavaScript block for custom background color picker:
+  // 1. Listens to 'input' and 'change' events and updates --canvas-bg live
+  // 2. Saves chosen color to localStorage so it stays across reloads
+  useEffect(() => {
+    const bgPicker = document.getElementById('bg-picker') as HTMLInputElement | null;
+    const savedColor = localStorage.getItem('canvas-bg') || localStorage.getItem('studymate_canvas_bg') || '#0d1117';
+
+    document.documentElement.style.setProperty('--canvas-bg', savedColor);
+    document.body.style.setProperty('--canvas-bg', savedColor);
+    if (bgPicker) {
+      bgPicker.value = savedColor;
+    }
+
+    if (!bgPicker) return;
+
+    const handleColorUpdate = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const newColor = target.value;
+      document.documentElement.style.setProperty('--canvas-bg', newColor);
+      document.body.style.setProperty('--canvas-bg', newColor);
+      localStorage.setItem('canvas-bg', newColor);
+      localStorage.setItem('studymate_canvas_bg', newColor);
+    };
+
+    bgPicker.addEventListener('input', handleColorUpdate);
+    bgPicker.addEventListener('change', handleColorUpdate);
+
+    return () => {
+      bgPicker.removeEventListener('input', handleColorUpdate);
+      bgPicker.removeEventListener('change', handleColorUpdate);
+    };
+  }, []);
 
   // Data states
   const [subjects, setSubjects] = useState<Subject[]>(() => loadStoredSubjects());
@@ -699,7 +730,7 @@ export default function App() {
   return (
     <div 
       className={`min-h-screen w-full flex flex-col justify-between overflow-x-hidden ${darkMode ? 'dark ' : ''}text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200`}
-      style={{ backgroundColor: 'var(--bg-canvas)' }}
+      style={{ backgroundColor: 'var(--canvas-bg, #0d1117)' }}
     >
       
       {/* 1. STICKY TOP NAVIGATION BAR */}
@@ -797,21 +828,29 @@ export default function App() {
               <Save className="w-4 h-4" />
             </button>
 
-            {/* Theme Color Customizer Button */}
-            <button
-              id="theme-customizer-btn"
-              type="button"
-              onClick={() => setIsThemeCustomizerOpen(true)}
-              title="Customize Theme Accent Color"
-              aria-label="Customize Theme Accent Color"
-              className="relative p-2 rounded-xl transition-colors duration-200 border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer shadow-xs flex items-center justify-center group"
+            {/* Custom Background Color Picker */}
+            <label
+              htmlFor="bg-picker"
+              title="Change Background Color"
+              className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer shadow-xs group"
             >
-              <Palette className="w-5 h-5 transition-transform group-hover:scale-105" style={{ color: 'var(--primary)' }} />
-              <span 
-                className="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full border border-white dark:border-slate-900 shadow-2xs"
-                style={{ backgroundColor: 'var(--primary)' }}
+              <Palette className="w-4 h-4 text-slate-600 dark:text-slate-300 group-hover:scale-105 transition-transform" />
+              <span
+                className="w-3.5 h-3.5 rounded-full border border-black/20 dark:border-white/25 shadow-2xs shrink-0"
+                style={{ backgroundColor: 'var(--canvas-bg, #0d1117)' }}
               />
-            </button>
+              <span className="hidden sm:inline text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Bg Color
+              </span>
+              <input
+                type="color"
+                id="bg-picker"
+                defaultValue="#0d1117"
+                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                title="Pick custom background color"
+                aria-label="Pick custom background color"
+              />
+            </label>
 
             {/* Dark Mode Toggle */}
             <ThemeToggle
@@ -860,13 +899,13 @@ export default function App() {
                 type="button"
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  setIsThemeCustomizerOpen(true);
+                  document.getElementById('bg-picker')?.click();
                 }}
                 className="flex items-center gap-1.5 font-semibold hover:underline cursor-pointer"
                 style={{ color: 'var(--primary)' }}
               >
                 <Palette className="w-3.5 h-3.5" />
-                <span>Theme Color</span>
+                <span>Bg Color</span>
               </button>
               <button
                 type="button"
@@ -1608,27 +1647,6 @@ export default function App() {
         onResetDefaults={handleResetDefaults}
       />
 
-      {/* Theme Color Customizer Modal */}
-      <ThemeCustomizer
-        isOpen={isThemeCustomizerOpen}
-        onClose={() => setIsThemeCustomizerOpen(false)}
-        currentThemeColor={themeColor}
-        onThemeColorChange={(newHex) => {
-          setThemeColor(newHex);
-          broadcastSync('THEME_CHANGED');
-        }}
-        currentBgColor={bgColor}
-        onBgColorChange={(newBg) => {
-          setBgColor(newBg);
-          broadcastSync('BG_CHANGED');
-        }}
-        currentSurfaceColor={surfaceColor}
-        onSurfaceColorChange={(newSurface) => {
-          setSurfaceColor(newSurface);
-          broadcastSync('BG_CHANGED');
-        }}
-      />
-
       {/* Slide Bar Drawer Menu */}
       <SlideBarDrawer
         isOpen={isSlideBarOpen}
@@ -1648,7 +1666,6 @@ export default function App() {
           setEditingSubject(null);
           setIsSubjectModalOpen(true);
         }}
-        onOpenThemeCustomizer={() => setIsThemeCustomizerOpen(true)}
       />
     </div>
   );
